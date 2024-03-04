@@ -1,0 +1,55 @@
+﻿@using vp_server.Models
+@model vp_server.Models.ProductsAttributesCategories
+@{
+    ViewBag.NamePage = "Продукция";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html>
+    <body>
+        <h2>Тест</h2>
+        <div class="flex">
+           <form method="get">
+               <div class="form-check-inline">
+                   <label class="control-table">Название</label>
+                   @Html.TextBox("name")
+                   <label class="control-table">Производитель:</label>
+                   @Html.DropDownList("manufacturer", Model.Manufacturers as SelectList, htmlAttributes: new {@class = "btn btn-sm dropdown-toggle"})
+                   <input type="submit" value="Фильтр" class="btn btn-dark"/>
+               </div>
+           </form>
+        </div>
+        @await Html.PartialAsync("Menu", Model)
+        <h1></h1>
+        <table class="table">
+            <thead>
+                <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Фотография</th>
+                <th>Стоимость</th>
+                <th>Категория</th>
+                <th>Производитель</th>
+                </tr>
+            </thead>
+            @foreach (var p in Model.Products)
+            {
+                <tr onclick="location.href='@Url.Action("AboutProduct", "Home", new {id = p.Id})'">  @* Можно ли передать модель? *@
+                    <td>@p.Id</td>
+                    <td>@p.Title</td>
+                    <td>
+                    @if(p.Image != null)
+                    {
+                        <img style='width:200px; height:200px;' src="data:image/jpeg;base64,@(Convert.ToBase64String(p.Image))"/>
+                    }
+                    </td>
+                <td>@p.Cost &#8381</td>
+                <td>@p.Category.CategoryName</td>
+                <td>@p.Manufacturer</td>
+                </tr> 
+            }
+        </table>
+    </body>
+</html>
+<link href="~/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/css/homeStyle.css" rel="stylesheet" />

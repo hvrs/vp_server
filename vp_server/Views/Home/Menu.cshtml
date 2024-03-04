@@ -1,0 +1,52 @@
+﻿@using vp_server.Models
+@model vp_server.Models.ProductsAttributesCategories
+@* настройка категорий и подкатегорий *@
+<!DOCTYPE html>
+<html>
+    <body>
+        <div class="wrapper">
+            <div class="sidebar">
+                <ul class="list-group tagota">
+                @foreach(var item in Model.Categories)
+                {
+                    if (item.ParentCategoryId == null)
+                    {
+                        @Html.ActionLink(item.CategoryName, "Index", "Home", new { category = item.Id}, new { @class = "list-group-item" })
+                        foreach (var it in Model.Categories)
+                        {
+                            if (it.ParentCategoryId == item.Id)
+                            {
+                                @Html.ActionLink(it.CategoryName, "Index", "Home", new { category = it.Id }, new { @class = "list-group-item secondary-item" })
+                            }
+                        }
+                    }
+                }
+            </ul>
+            </div>
+        </div>
+    <style>
+        .secondary-item{
+            margin: 0 0 0 10px;
+        }
+        .tagota {
+            margin: 47px 0 0 0;
+        }
+
+        body {
+            background: #f5f6fa;
+        }
+
+        .wrapper .sidebar {
+            background-color: #E2EDEE;
+            position: fixed;
+            top: 0px;
+            left: 0;
+            width: 222px;
+            height: 100%;
+            padding: 20px 0;
+            transition: all 0.5s ease;
+        }
+    </style>
+    </body>
+</html>
+<link href="~/css/bootstrap.min.css" rel="stylesheet" />

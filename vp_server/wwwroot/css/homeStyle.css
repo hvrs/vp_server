@@ -1,0 +1,44 @@
+﻿/* Для таблицы в Index*/
+.flex {
+    margin: 90px 0 0 150px;
+}
+.table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 85%;
+    margin: 0 0 0 220px;
+}
+    .table th, .table td {
+        border: 1px solid #888;
+        padding: 10px;
+        text-align: center;
+        vertical-align: middle;
+        position: relative;
+    }
+
+    .table tr:hover td {
+        background: #fffabe;
+    }
+
+        .table tr:hover td:after {
+            content: '';
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            bottom: 0px;
+            left: 0px;
+            width: 105%;
+            border-top: 3px solid orange;
+            border-bottom: 3px solid orange;
+        }
+
+        /* Рамка слева у первой ячейки */
+        .table tr:hover td:first-child:after {
+            border-left: 3px solid orange;
+        }
+
+        /* Рамка справа у последний ячейки */
+        .table tr:hover td:last-child:after {
+            border-right: 3px solid orange;
+            width: auto;
+        }
