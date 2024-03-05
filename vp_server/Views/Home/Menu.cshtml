@@ -7,7 +7,7 @@
         <div class="wrapper">
             <div class="sidebar">
                 <ul class="list-group tagota">
-                @foreach(var item in Model.Categories)
+                @foreach(var item in Model.Categories) @* Реализация трехуровнегово меню (больше пока не нужно) *@
                 {
                     if (item.ParentCategoryId == null)
                     {
@@ -17,14 +17,29 @@
                             if (it.ParentCategoryId == item.Id)
                             {
                                 @Html.ActionLink(it.CategoryName, "Index", "Home", new { category = it.Id }, new { @class = "list-group-item secondary-item" })
+                                foreach (var i in Model.Categories)
+                                {
+                                    if (i.ParentCategoryId == it.Id)
+                                    {
+                                        @Html.ActionLink(i.CategoryName, "Index", "Home", new {category = i.Id}, new {@class = "list-group-item third-item"})
+                                    }
+                                }
                             }
                         }
-                    }
+                    }                
                 }
+                @Html.ActionLink("Редактирование категорий", "UpdateCategories", "Home",null, new {@class="nav-link link-in-menu"})
             </ul>
             </div>
         </div>
     <style>
+        .link-in-menu{
+            font-size: 10pt;
+            margin: 600px 0 0 8px;
+        }
+        .third-item{
+            margin: 0 0 0 20px;
+        }
         .secondary-item{
             margin: 0 0 0 10px;
         }
