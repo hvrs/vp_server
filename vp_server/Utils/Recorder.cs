@@ -4,6 +4,7 @@ namespace vp_server.Utils
 {
     public class Recorder
     {
+        static VapeshopContext dba = new VapeshopContext();
         //Получить список имеющихся продуктов
         public List<Product> getProducts()
         {
@@ -23,6 +24,35 @@ namespace vp_server.Utils
             }
         }
         //Получить список производителей
-       
+        public List<Manufacturer> GetManufacturers()
+        {
+            using (VapeshopContext db = new VapeshopContext())            
+                return db.Manufacturers.ToList(); 
+        }
+        //Получить список количества никотина
+        public List<NicotineType> GetNicotineType()
+        {
+            using (VapeshopContext db = new VapeshopContext())
+                return db.NicotineTypes.ToList();
+        }
+        //Получить список крепкости
+        public List<Strenght> GetStrenghts()
+        {
+            using (VapeshopContext db = new VapeshopContext())
+                return db.Strenghts.ToList();
+        }
+        //Передать во ViewBag категории только с двумя параметрами
+        public List<CategoriesDTO> GetTrueCategories()
+        {
+            //Воткнуть тут выборку определенных категорий, которые можно приписать к продукции
+
+            var categories = from c in dba.Categories
+                             select new CategoriesDTO()
+                             {
+                                 Id = c.Id,
+                                 Title = c.CategoryName
+                             };
+            return categories.ToList();
+        }
     }
 }

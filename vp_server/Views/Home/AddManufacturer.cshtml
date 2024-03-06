@@ -1,0 +1,23 @@
+﻿@using vp_server.Models;
+@model vp_server.Models.Manufacturer
+@{
+    ViewBag.NamePage = "Добавление производителя";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+<div class="marga">
+    @using (Html.BeginForm("CreateManufacturer","Home", FormMethod.Post))
+    {
+        <p>
+            <label>Название производителя:</label>
+            <input type="text" asp-for="Title" />
+            <span asp-validation-for="Title"/>
+        </p>
+        <p>
+            <input type="submit" value="Записать"/>
+        </p>
+    }
+</div>
+<script src="~/js/jquery-3.5.1.min.js"></script>
+<script src="~/js/jquery.validate.min.js"></script>
+<script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+<link href="~/css/homeStyle.css" rel="stylesheet"/>
