@@ -1,4 +1,5 @@
 ﻿using vp_server.Models;
+using vp_server.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 namespace vp_server.Utils
 {
@@ -53,6 +54,33 @@ namespace vp_server.Utils
                                  Title = c.CategoryName
                              };
             return categories.ToList();
+        }
+        //Передать Views только с определенными параметрами для определенного продукта
+        public List<ProductViews> GetProductViews(int id)
+        {
+            var Views = from v in dba.Views.Where(v => v.ProductId == id)
+                        select new ProductViews()
+                        {
+                            Id = v.Id,
+                            date = v.Date,
+                            time = v.Time
+                        };
+            return Views.ToList();
+        }
+        //Передать определенные аттрибуты связных таблиц транзакции для определенного продукта
+        public List<ProductTransaction> GetProductTransactions(int id)
+        {           
+            var transactions = dba.TransactionsAndProducts.Where(t=>t.ProductId==id).Join(dba.Transactions,
+                tp => tp.TransactionId,
+                t => t.Id,
+                (tp, t) => new ProductTransaction()
+                {
+                    Id = tp.Id,                   
+                    Quantitly = tp.Quantitly,
+                    date = t.Date
+                });
+            return transactions.ToList();
+            
         }
     }
 }

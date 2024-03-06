@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using vp_server.Models;
+using vp_server.Models.ViewModels;
 using vp_server.Utils;
 
 namespace vp_server.Controllers
@@ -79,7 +80,32 @@ namespace vp_server.Controllers
         public IActionResult AddManufacturer()
         {
             return View();
+        }       
+
+        public IActionResult AddProduct()
+        {
+            ViewBag.manufacturers = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetManufacturers(), "Id", "Title");
+            ViewBag.categories = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetTrueCategories(), "Id", "Title");
+            ViewBag.nicotine = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetNicotineType(), "Id", "Title");
+            ViewBag.strenght = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetStrenghts(), "Id", "Title");
+            return View();
         }
+        
+        public IActionResult AboutProduct(int id)
+        {
+            using (VapeshopContext db = new VapeshopContext())
+            {              
+                ProductViewsTransactions PVT = new ProductViewsTransactions
+                {
+                    Product = db.Products.Include(p => p.Category).Include(p => p.Manufacturer).Include(p => p.Strength).Include(p => p.NicotineType).Where(p => p.Id == id).FirstOrDefault(),
+                    Views = recorder.GetProductViews(id),
+                    productTransactions = recorder.GetProductTransactions(id)
+                };
+                return View(PVT);
+            }                
+        }
+
+        #region HTTPS
         [HttpPost]
         public async Task<IActionResult> CreateManufacturer(Manufacturer manufacturer)
         {
@@ -95,14 +121,6 @@ namespace vp_server.Controllers
             return Content("Данные не прошли проверку");
         }
 
-        public IActionResult AddProduct()
-        {
-            ViewBag.manufacturers = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetManufacturers(), "Id", "Title");
-            ViewBag.categories = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetTrueCategories(), "Id", "Title");
-            ViewBag.nicotine = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetNicotineType(), "Id", "Title");
-            ViewBag.strenght = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetStrenghts(), "Id", "Title");
-            return View();
-        }
         [HttpPost]
         public async Task<IActionResult> CreateProduct(Product product, IFormFile PhotoFile, int? quantity)
         {
@@ -115,7 +133,7 @@ namespace vp_server.Controllers
                     imageData = binaryReader.ReadBytes((int)PhotoFile.Length);
                 }
                 ValidatewPhoto validatew = new ValidatewPhoto();
-                if(validatew.IsImage(imageData))
+                if (validatew.IsImage(imageData))
                     product.Image = imageData;
             }
             else
@@ -123,7 +141,7 @@ namespace vp_server.Controllers
                 var exePath = Directory.GetCurrentDirectory();
                 imageData = System.IO.File.ReadAllBytes(Path.GetFullPath(Path.Combine(exePath, "Utils\\stub.jpg")));
                 product.Image = imageData;
-            }            
+            }
             using (VapeshopContext db = new VapeshopContext())
             {
                 ProductCount PC = new ProductCount();
@@ -142,6 +160,7 @@ namespace vp_server.Controllers
             }
 
         }
+        #endregion
     }
 }
 //Scaffold-DbContext "Data Source=(local);Initial Catalog=vapeshop;Integrated Security=True;Encrypt=False" Microsoft.EntityFrameworkCore.SqlServer
