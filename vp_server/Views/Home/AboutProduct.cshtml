@@ -4,3 +4,79 @@
     ViewBag.NamePage = "О продукте";
     Layout = "/Views/Shared/_Layout.cshtml";
 }
+<!DOCTYPE html>
+<html>
+    <body>
+    <div class="main">
+        <div class="container">
+                @using (Html.BeginForm("UpdateProduct", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                <div class="marga">   
+                    <div class="row">
+                        <div class="col border">
+                        <label>
+                            <img style='width:400px; height:400px;' class="rounded-3" src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.Product.Image))" />
+                            <input type="file" name="PhotoFile" enctype="multipart/form-data" style="display:none" />
+                        </label>
+                        </div>
+                        <div class="col border">
+                            <p>
+                                <label>Название:</label>
+                                <input type="text" class="form-control" asp-for="Product.Title" value="@Model.Product.Title" /><span asp-validation-for="Product.Title" />
+                            </p>
+                            <p>
+                                <label>Стоимость:</label>
+                                <input type="number" class="form-control" asp-for="Product.Cost" value="@Model.Product.Cost" /><span asp-validation-for="Product.Cost" />
+                            </p>
+                            <p>
+                                <label>Материал:</label>
+                                <input type="text" class="form-control" asp-for="Product.Material" value="@Model.Product.Material" /><span asp-validation-for="Product.Material"/>
+                            </p>
+                            @if (Model.Product.Taste != null)
+                            {
+                                <p>
+                                    <label>Вкус:</label>
+                                    <input type="text" class="form-control" asp-for="Product.Taste" value="@Model.Product.Taste"/>
+                                </p>
+                            }
+                            <p>
+                                <label>Категория</label>
+                                @Html.DropDownListFor(p => p.Product.CategoryId, ViewBag.categories as SelectList)
+                            </p>
+                            <p>
+                                <label>Количество никотина:</label>
+                                @Html.DropDownListFor(p => p.Product.NicotineType, ViewBag.nicotine as SelectList)
+                            </p>
+                            <p>
+                                <label>Крепкость:</label>
+                                @Html.DropDownListFor(p => p.Product.StrengthId, ViewBag.strenght as SelectList)
+                            </p>
+                            <p>
+                                <label>Производитель:</label>
+                                @Html.DropDownListFor(p=>p.Product.ManufacturerId, ViewBag.manufacturers as SelectList)
+                            </p>
+                            <p>
+                                <label>Количество в данный момент: @Model.Count шт.</label>
+                            </p>
+                            <p>
+                                <input type="submit" class="btn btn-primary" value="Добавить" />
+                            </p>
+                            <p>
+                                @Html.ActionLink("Удалить", "Delete", "Home", new { id = Model.Product.Id }, new { @class = "btn btn-danger" })
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+                }         
+        </div>     
+    </div>
+  
+</body>
+</html>
+<style>
+    .trborder{
+        margin: 0px 0 0px 600px;
+    }
+</style>
+<link href="~/css/homeStyle.css" rel="stylesheet" />

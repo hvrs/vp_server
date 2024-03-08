@@ -4,8 +4,9 @@ namespace vp_server.Models.ViewModels
     public class ProductViewsTransactions
     {
         public Product Product { get; set; }
-        public IEnumerable<ProductViews> Views { get; set; }
-        public IEnumerable<ProductTransaction> productTransactions { get; set; }
+        public int? Count { get; set; }
+        /*public IEnumerable<ProductViews> Views { get; set; }
+        public IEnumerable<ProductTransaction> productTransactions { get; set; }*/
     }
     public class ProductTransaction
     {

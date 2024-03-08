@@ -7,52 +7,60 @@
 <!DOCTYPE html>
 <html>
     <body>
-        <div class="marga">
-        @using (Html.BeginForm("CreateProduct", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
-        {
-            <p>
-                <label>Название:</label>
-                <input type="text" asp-for="Title"/>
-                <span asp-validation-for="Title"/>
-            </p>
-            <p>
-                <label>Стоимость:</label>
-                <input type="number" asp-for="Cost"/>
-                <span asp-validation-for="Cost"/>
-            </p>
-            <p>
-                <label>Материал:</label>
-                @Html.TextBoxFor(p => p.Material)
-            </p>
-            <p>
-                <label>Количество на складе:</label>
-                @Html.TextBox("quantity")
-            </p>
-            <p>
-                <label>Производитель:</label>
-                @Html.DropDownListFor(p => p.ManufacturerId, ViewBag.manufacturers as SelectList)
-            </p>
-            <p>
-                <label>Категория:</label>
-                @Html.DropDownListFor(p => p.CategoryId, ViewBag.categories as SelectList)
-            </p>
-            <p>
-                <label>Содержание никотина:</label>
-                @Html.DropDownListFor(p => p.NicotineTypeId, ViewBag.nicotine as SelectList)
-            </p>
-            <p>
-                <label>Крепкость:</label>
-                @Html.DropDownListFor(p => p.StrengthId, ViewBag.strenght as SelectList)
-            </p>
-            <p>
-                <label>Фотография:</label>
-                <input name="PhotoFile" type="file" enctype="multipart/form-data" />
-            </p>
-            <p>
-                <input type="submit" value="Добавить" />
-            </p>
-        }
-    </div>
+    <div class="main">
+        <div class="container">          
+                @using (Html.BeginForm("CreateProduct", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <div class="marga">
+                        <div class="row">
+                        <div class="col-lg">
+                            <p>
+                                <label>Название:</label>
+                                <input type="text" class="form-control" asp-for="Title" />
+                                <span asp-validation-for="Title" />
+                            </p>
+                            <p>
+                                <label>Стоимость:</label>
+                                <input type="number" class="form-control" asp-for="Cost" />
+                                <span asp-validation-for="Cost" />
+                            </p>
+                            <p>
+                                <label>Материал:</label>
+                                @Html.TextBoxFor(p => p.Material,null,new{@class="form-control"})
+                            </p>
+                            <p>
+                                <label>Количество на складе:</label>
+                                @Html.TextBox("quantity", null, new { @class = "form-control" })
+                            </p>
+                            <p>
+                                <label>Производитель:</label>
+                                @Html.DropDownListFor(p => p.ManufacturerId, ViewBag.manufacturers as SelectList, null, new { @class = "form-control" })
+                            </p>
+                            <p>
+                                <label>Категория:</label>
+                                @Html.DropDownListFor(p => p.CategoryId, ViewBag.categories as SelectList, null, new { @class = "form-control" })
+                            </p>
+                            <p>
+                                <label>Содержание никотина:</label>
+                                @Html.DropDownListFor(p => p.NicotineTypeId, ViewBag.nicotine as SelectList, null, new { @class = "form-control" })
+                            </p>
+                            <p>
+                                <label>Крепкость:</label>
+                                @Html.DropDownListFor(p => p.StrengthId, ViewBag.strenght as SelectList, null, new { @class = "form-control" })
+                            </p>
+                            <p>
+                                <label>Фотография:</label>
+                                <input name="PhotoFile" type="file" enctype="multipart/form-data" />
+                            </p>
+                            <p>
+                                <input type="submit" class="btn btn-primary" value="Добавить" />
+                            </p>
+                            </div>                  
+                        </div>                   
+                </div>
+                }
+        </div>
+    </div>       
     </body>
 </html>
 <script src="~/js/jquery-3.5.1.min.js"></script>

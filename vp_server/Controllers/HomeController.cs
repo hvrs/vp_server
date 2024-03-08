@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
 using vp_server.Models;
 using vp_server.Models.ViewModels;
 using vp_server.Utils;
@@ -93,14 +94,28 @@ namespace vp_server.Controllers
         
         public IActionResult AboutProduct(int id)
         {
+
             using (VapeshopContext db = new VapeshopContext())
-            {              
+            {
+                var cotn = db.ProductCounts.Where(x => x.ProductId == id).Select(s => new
+                {
+                   _count = s.Count,
+                }).FirstOrDefault();
+                
+
                 ProductViewsTransactions PVT = new ProductViewsTransactions
                 {
+                    
                     Product = db.Products.Include(p => p.Category).Include(p => p.Manufacturer).Include(p => p.Strength).Include(p => p.NicotineType).Where(p => p.Id == id).FirstOrDefault(),
-                    Views = recorder.GetProductViews(id),
-                    productTransactions = recorder.GetProductTransactions(id)
+                    Count = cotn._count.Value
+
+                    /*Views = recorder.GetProductViews(id),
+                    productTransactions = recorder.GetProductTransactions(id)*/
                 };
+                ViewBag.manufacturers = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetManufacturers(), "Id", "Title", PVT.Product.ManufacturerId.ToString());
+                ViewBag.categories = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetTrueCategories(), "Id", "Title", PVT.Product.CategoryId.ToString());
+                ViewBag.nicotine = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetNicotineType(), "Id", "Title", PVT.Product.NicotineTypeId.ToString());
+                ViewBag.strenght = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetStrenghts(), "Id", "Title", PVT.Product.StrengthId.ToString());
                 return View(PVT);
             }                
         }

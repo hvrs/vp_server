@@ -79,8 +79,7 @@ namespace vp_server.Utils
                     Quantitly = tp.Quantitly,
                     date = t.Date
                 });
-            return transactions.ToList();
-            
+            return transactions.ToList();          
         }
     }
 }
