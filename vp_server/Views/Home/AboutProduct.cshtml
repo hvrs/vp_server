@@ -15,11 +15,15 @@
                     <div class="row">
                         <div class="col border">
                         <label>
-                            <img style='width:400px; height:400px;' class="rounded-3" src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.Product.Image))" />
-                            <input type="file" name="PhotoFile" enctype="multipart/form-data" style="display:none" />
+                                <img id="uploadPreview" style='width:400px; height:400px;' class="rounded-3" src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.Product.Image))" />
+                                <input id="uploadImage" onchange="PreviewImage();" type="file" name="PhotoFile" enctype="multipart/form-data" style="display:none" />                               
                         </label>
+                        <div class="row border">
+                                @await Html.PartialAsync("QuantityAdd",Model)
+                        </div>
                         </div>
                         <div class="col border">
+                            <input type="number" hidden="hidden" asp-for="Product.Id" value="@Model.Product.Id" />
                             <p>
                                 <label>Название:</label>
                                 <input type="text" class="form-control" asp-for="Product.Title" value="@Model.Product.Title" /><span asp-validation-for="Product.Title" />
@@ -41,19 +45,19 @@
                             }
                             <p>
                                 <label>Категория</label>
-                                @Html.DropDownListFor(p => p.Product.CategoryId, ViewBag.categories as SelectList)
+                                @Html.DropDownListFor(p => p.Product.CategoryId, ViewBag.categories as SelectList, null, new { @class = "form-control" })
                             </p>
                             <p>
                                 <label>Количество никотина:</label>
-                                @Html.DropDownListFor(p => p.Product.NicotineType, ViewBag.nicotine as SelectList)
+                                @Html.DropDownListFor(p => p.Product.NicotineType, ViewBag.nicotine as SelectList, null, new { @class = "form-control" })
                             </p>
                             <p>
                                 <label>Крепкость:</label>
-                                @Html.DropDownListFor(p => p.Product.StrengthId, ViewBag.strenght as SelectList)
+                                @Html.DropDownListFor(p => p.Product.StrengthId, ViewBag.strenght as SelectList, null, new { @class = "form-control" })
                             </p>
                             <p>
                                 <label>Производитель:</label>
-                                @Html.DropDownListFor(p=>p.Product.ManufacturerId, ViewBag.manufacturers as SelectList)
+                                @Html.DropDownListFor(p => p.Product.ManufacturerId, ViewBag.manufacturers as SelectList, null, new { @class = "form-control" })
                             </p>
                             <p>
                                 <label>Количество в данный момент: @Model.Count шт.</label>
@@ -71,7 +75,17 @@
                 }         
         </div>     
     </div>
-  
+    <script type="text/javascript">
+        function PreviewImage() {
+            var oFReader = new FileReader();
+            oFReader.readAsDataURL(document.getElementById("uploadImage").files[0]);
+
+            oFReader.onload = function (oFREvent) {
+                document.getElementById("uploadPreview").src = oFREvent.target.result;
+            };
+        };
+
+    </script>
 </body>
 </html>
 <style>
@@ -80,3 +94,4 @@
     }
 </style>
 <link href="~/css/homeStyle.css" rel="stylesheet" />
+<script src="~/js/jquery-3.5.1.slim.min.js"></script>

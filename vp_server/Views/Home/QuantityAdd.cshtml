@@ -1,0 +1,27 @@
+﻿@using vp_server.Models.ViewModels
+@model vp_server.Models.ViewModels.ProductViewsTransactions
+<!DOCTYPE html>
+<html>
+    <body>
+    <label>The quantity at the moment: @Model.Count</label>
+        <form>
+        <label>Entrance:</label>
+            <input type="number" id="qnt" name="quantity" />
+            <input type="button" onclick="addQuantityClicked()" id="changeButton" value="Add" />
+        </form>
+
+    <script type="text/javascript">
+        function addQuantityClicked() {
+            var Url = '@Url.Action("QuantityAdd", "Home")';
+            $.ajax({
+                url: Url,
+                type: 'POST',
+                data: { idProduct: @Model.Product.Id, quantity: alert($("#qnt").val) }
+                
+            })
+        }
+    </script>
+    </body>
+</html>
+<script src="~/js/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/js/jquery-3.5.1.min.js"></script>

@@ -91,6 +91,10 @@ namespace vp_server.Controllers
             ViewBag.strenght = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetStrenghts(), "Id", "Title");
             return View();
         }
+        public IActionResult jqTest()
+        {
+            return View();
+        }
         
         public IActionResult AboutProduct(int id)
         {
@@ -119,8 +123,81 @@ namespace vp_server.Controllers
                 return View(PVT);
             }                
         }
+        public IActionResult Delete(int id)
+        {
+            using (VapeshopContext db = new VapeshopContext())
+            {
+                Product? product = db.Products.Where(p => p.Id == id).FirstOrDefault();
+                if (product != null)
+                {
+                    db.Products.Remove(product);
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<IActionResult> QuantityAdd(int idProduct, int quantity)//Либо же отправлять модель полностью и возвращать также
+        {
+            using (VapeshopContext db = new VapeshopContext())
+            {
+                ProductCount? productCount = db.ProductCounts.Where(pc => pc.ProductId == idProduct).FirstOrDefault();
+                if (productCount != null)
+                {
+                    productCount.Count += quantity;
+                }
+                await db.SaveChangesAsync();
+
+                return PartialView();
+            }            
+        }
 
         #region HTTPS
+        [HttpPost]
+        public async Task<IActionResult> UpdateProduct(ProductViewsTransactions PVT, IFormFile? PhotoFile)
+        {
+            /*if (ModelState.IsValid)
+            {*/
+                using (VapeshopContext db = new VapeshopContext())
+                {
+                    Product? product = db.Products.Where(p => p.Id == PVT.Product.Id).FirstOrDefault();
+                    if (product != null)
+                    {
+                        product.Title = PVT.Product.Title;
+                        product.Cost = PVT.Product.Cost;
+                        product.Material = PVT.Product.Material;
+                        product.Taste = PVT.Product.Taste;
+                        product.CategoryId = PVT.Product.CategoryId;
+                        product.NicotineTypeId = PVT.Product.NicotineTypeId;
+                        product.StrengthId = PVT.Product.StrengthId;
+                        product.ManufacturerId = PVT.Product.ManufacturerId;
+                        if (PhotoFile !=null)
+                        {
+                            byte[] imageData = null;
+                            using (var binaryReader = new BinaryReader(PhotoFile.OpenReadStream()))
+                                imageData = binaryReader.ReadBytes((int)PhotoFile.Length);
+                            product.Image = imageData;         
+                        }
+                        await db.SaveChangesAsync();
+                    }
+                    return RedirectToAction("Index");
+                }
+            /*}*/
+            /*string errorMessages = "";
+            foreach (var item in ModelState)
+            {
+                if (item.Value.ValidationState == Microsoft.AspNetCore.Mvc.ModelBinding.ModelValidationState.Invalid)
+                {
+                    foreach (var error in item.Value.Errors)
+                    {
+                        errorMessages = $"{errorMessages}{error.ErrorMessage}\n";
+                    }
+                }
+            }
+            return Content(errorMessages);*/
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> CreateManufacturer(Manufacturer manufacturer)
         {
