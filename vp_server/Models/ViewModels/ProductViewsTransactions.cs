@@ -1,5 +1,4 @@
-﻿using vp_server.Models;
-namespace vp_server.Models.ViewModels
+﻿namespace vp_server.Models.ViewModels
 {
     public class ProductViewsTransactions
     {

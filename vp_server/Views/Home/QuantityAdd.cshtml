@@ -3,25 +3,31 @@
 <!DOCTYPE html>
 <html>
     <body>
-    <label>The quantity at the moment: @Model.Count</label>
+    <label for="">Количество в данный момент: @Model.Count</label>
         <form>
-        <label>Entrance:</label>
+        <label>Добавление продукции:</label>
             <input type="number" id="qnt" name="quantity" />
-            <input type="button" onclick="addQuantityClicked()" id="changeButton" value="Add" />
-        </form>
-
+        <input type="button" onclick="addQuantityClicked()" id="btnPost" value="Добавить" />
+    </form>
     <script type="text/javascript">
         function addQuantityClicked() {
-            var Url = '@Url.Action("QuantityAdd", "Home")';
+            var abv = '@Url.Action("_Quantity", "Home")';
             $.ajax({
-                url: Url,
+                url: abv,
                 type: 'POST',
-                data: { idProduct: @Model.Product.Id, quantity: alert($("#qnt").val) }
-                
-            })
+                data: { "idProduct": @Model.Product.Id, "quantity": $("#qnt").val() },
+                success: function (request) {
+                    alert("Количество на складе: " + request)
+                },
+                error: function () {
+                    alert("пиздос")
+                }
+
+            });
         }
     </script>
-    </body>
+    </body>  
 </html>
-<script src="~/js/jquery.unobtrusive-ajax.min.js"></script>
-<script src="~/js/jquery-3.5.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+

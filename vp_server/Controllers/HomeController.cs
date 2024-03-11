@@ -136,8 +136,10 @@ namespace vp_server.Controllers
             }
             return RedirectToAction("Index");
         }
+
+        #region HTTPS
         [HttpPost]
-        public async Task<IActionResult> QuantityAdd(int idProduct, int quantity)//Либо же отправлять модель полностью и возвращать также
+        public async Task<IActionResult> _Quantity(int idProduct, int quantity)//Либо же отправлять модель полностью и возвращать также
         {
             using (VapeshopContext db = new VapeshopContext())
             {
@@ -148,11 +150,19 @@ namespace vp_server.Controllers
                 }
                 await db.SaveChangesAsync();
 
-                return PartialView();
-            }            
-        }
+                ReplenishmentProduct RP = new ReplenishmentProduct
+                {
+                    ProductId = idProduct,
+                    Date = DateOnly.FromDateTime(DateTime.Now),
+                    Quantity = quantity
+                };
+                db.ReplenishmentProducts.Add(RP);
+                await db.SaveChangesAsync();
 
-        #region HTTPS
+                return Json(productCount.Count);
+            }
+
+        }
         [HttpPost]
         public async Task<IActionResult> UpdateProduct(ProductViewsTransactions PVT, IFormFile? PhotoFile)
         {

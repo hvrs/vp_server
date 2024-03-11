@@ -25,6 +25,8 @@ public partial class VapeshopContext : DbContext
 
     public virtual DbSet<ProductCount> ProductCounts { get; set; }
 
+    public virtual DbSet<ReplenishmentProduct> ReplenishmentProducts { get; set; }
+
     public virtual DbSet<Strenght> Strenghts { get; set; }
 
     public virtual DbSet<Transaction> Transactions { get; set; }
@@ -111,6 +113,18 @@ public partial class VapeshopContext : DbContext
             entity.HasOne(d => d.Product).WithMany(p => p.ProductCounts)
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("FK_ProductCount_Product");
+        });
+
+        modelBuilder.Entity<ReplenishmentProduct>(entity =>
+        {
+            entity.ToTable("ReplenishmentProduct");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.ProductId).HasColumnName("ProductID");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ReplenishmentProducts)
+                .HasForeignKey(d => d.ProductId)
+                .HasConstraintName("FK_ReplenishmentProduct_Product");
         });
 
         modelBuilder.Entity<Strenght>(entity =>

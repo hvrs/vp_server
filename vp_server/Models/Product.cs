@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
 
 namespace vp_server.Models;
 
@@ -30,14 +29,16 @@ public partial class Product
     public int? StrengthId { get; set; }
 
     public int? ManufacturerId { get; set; }
-  
+
     public virtual Category Category { get; set; } = null!;
-    
+
     public virtual Manufacturer? Manufacturer { get; set; }
-  
+
     public virtual NicotineType? NicotineType { get; set; }
-   
+
     public virtual ICollection<ProductCount> ProductCounts { get; set; } = new List<ProductCount>();
+
+    public virtual ICollection<ReplenishmentProduct> ReplenishmentProducts { get; set; } = new List<ReplenishmentProduct>();
 
     public virtual Strenght? Strength { get; set; }
 

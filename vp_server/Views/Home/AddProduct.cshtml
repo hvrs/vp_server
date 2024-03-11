@@ -48,9 +48,12 @@
                                 <label>Крепкость:</label>
                                 @Html.DropDownListFor(p => p.StrengthId, ViewBag.strenght as SelectList, null, new { @class = "form-control" })
                             </p>
-                            <p>
-                                <label>Фотография:</label>
-                                <input name="PhotoFile" type="file" enctype="multipart/form-data" />
+                            <p><label>Изображение:</label></p>
+                            <p>                               
+                                <label>
+                                    <img id="uploadPreview" style='width:400px; height:400px;' class="rounded-3" src="/images/stub.jpg" />
+                                    <input id="uploadImage" onchange="PreviewImage();" type="file" name="PhotoFile" enctype="multipart/form-data" style="display:none" />
+                                </label>                                
                             </p>
                             <p>
                                 <input type="submit" class="btn btn-primary" value="Добавить" />
@@ -60,10 +63,20 @@
                 </div>
                 }
         </div>
-    </div>       
+    </div>
+    <script type="text/javascript">
+        function PreviewImage() {
+            var oFReader = new FileReader();
+            oFReader.readAsDataURL(document.getElementById("uploadImage").files[0]);
+
+            oFReader.onload = function (oFREvent) {
+                document.getElementById("uploadPreview").src = oFREvent.target.result;
+            };
+        };
+
+    </script>
     </body>
 </html>
-<script src="~/js/jquery-3.5.1.min.js"></script>
 <script src="~/js/jquery.validate.min.js"></script>
 <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
 <link href="~/css/homeStyle.css" rel="stylesheet" />
