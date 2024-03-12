@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html>
     <body>
-    <label for="">Количество в данный момент: @Model.Count</label>
+    <label>Количество в данный момент:</label> <input id="counter"value="@Model.Count" disabled />
         <form>
         <label>Добавление продукции:</label>
-            <input type="number" id="qnt" name="quantity" />
-        <input type="button" onclick="addQuantityClicked()" id="btnPost" value="Добавить" />
+        <input type="number" id="qnt" name="quantity" class="form-control" />
+        <input type="button" onclick="addQuantityClicked()" id="btnPost" value="Добавить" class="btn btn-light"/>
     </form>
     <script type="text/javascript">
         function addQuantityClicked() {
@@ -17,7 +17,7 @@
                 type: 'POST',
                 data: { "idProduct": @Model.Product.Id, "quantity": $("#qnt").val() },
                 success: function (request) {
-                    alert("Количество на складе: " + request)
+                    $("#counter").val(request)
                 },
                 error: function () {
                     alert("пиздос")

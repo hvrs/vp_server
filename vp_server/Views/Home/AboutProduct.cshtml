@@ -13,16 +13,16 @@
                 {
                 <div class="marga">   
                     <div class="row">
-                        <div class="col border">
+                        <div class="col">
                         <label>
                                 <img id="uploadPreview" style='width:400px; height:400px;' class="rounded-3" src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.Product.Image))" />
                                 <input id="uploadImage" onchange="PreviewImage();" type="file" name="PhotoFile" enctype="multipart/form-data" style="display:none" />                               
                         </label>
-                        <div class="row border">
+                        <div class="row">
                                 @await Html.PartialAsync("QuantityAdd",Model)
                         </div>
                         </div>
-                        <div class="col border">
+                        <div class="col">
                             <input type="number" hidden="hidden" asp-for="Product.Id" value="@Model.Product.Id" />
                             <p>
                                 <label>Название:</label>
@@ -58,23 +58,82 @@
                             <p>
                                 <label>Производитель:</label>
                                 @Html.DropDownListFor(p => p.Product.ManufacturerId, ViewBag.manufacturers as SelectList, null, new { @class = "form-control" })
+                            </p>                            
+                            <p>
+                                <input type="submit" class="btn btn-primary" value="Добавить" /> @Html.ActionLink("Удалить", "Delete", "Home", new { id = Model.Product.Id }, new { @class = "btn btn-danger" })
                             </p>
                             <p>
-                                <label>Количество в данный момент: @Model.Count шт.</label>
-                            </p>
-                            <p>
-                                <input type="submit" class="btn btn-primary" value="Добавить" />
-                            </p>
-                            <p>
-                                @Html.ActionLink("Удалить", "Delete", "Home", new { id = Model.Product.Id }, new { @class = "btn btn-danger" })
+                                <input type="text" name="daterange" value="01/01/2018 - 01/15/2018" />
+                                <script type="text/javascript" src="~/js/datepicker/moment.min.js"></script>
+                                <script type="text/javascript" src="~/js/datepicker/daterangepicker.min.js"></script>
+                                <link rel="stylesheet" type="text/css" href="~/css/daterangepicker.css" />                                
                             </p>
                         </div>
+                    </div>
+                    <div class="row">
+                        <script src="~/js/diagram/highcharts.js"></script>
+                        <script src="~/js/diagram/exporting.js"></script>
+                        <script src="~/js/diagram/export-data.js"></script>
+                        <script src="~/js/diagram/accessibility.js"></script>                       
+                        <figure class="highcharts-figure">
+                            <div id="container"></div>                           
+                        </figure>
                     </div>
 
                 </div>
                 }         
         </div>     
     </div>
+    <script type="text/javascript">
+        $('input[name="daterange"]').daterangepicker();
+        $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
+            var URL = '@Url.Action("GetDataAboutViews","Home")';
+            $.ajax({
+                url: URL,
+                type: 'POST',
+                data: { "idProduct": @Model.Product.Id, "dateStart": picker.startDate.format('DD-MM-YYYY'), "dateEnd": picker.endDate.format('DD-MM-YYYY') },
+                success: function (request) {
+                    alert("четко")
+                }
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        Highcharts.chart('container', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Просмотры и покупки продукции'
+            },            
+            xAxis: {
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
+            yAxis: {
+                title: {
+                    text: 'Количество (ШТ.)'
+                }
+            },
+            plotOptions: {
+                line: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    enableMouseTracking: false
+                }
+            },
+            series: [{
+                name: 'Просмотры',
+                data: [16.0, 18.2, 23.1, 27.9, 32.2, 36.4, 39.8, 38.4, 35.5, 29.2,
+                    22.0, 17.8]
+            }, {
+                name: 'Покупки',
+                data: [-2.9, -3.6, -0.6, 4.8, 10.2, 14.5, 17.6, 16.5, 12.0, 6.5,
+                    2.0, -0.9]
+            }]
+        });
+    </script>
+
     <script type="text/javascript">
         function PreviewImage() {
             var oFReader = new FileReader();
@@ -94,4 +153,3 @@
     }
 </style>
 <link href="~/css/homeStyle.css" rel="stylesheet" />
-

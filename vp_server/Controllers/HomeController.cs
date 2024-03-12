@@ -122,7 +122,7 @@ namespace vp_server.Controllers
                 ViewBag.strenght = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetStrenghts(), "Id", "Title", PVT.Product.StrengthId.ToString());
                 return View(PVT);
             }                
-        }
+        } 
         public IActionResult Delete(int id)
         {
             using (VapeshopContext db = new VapeshopContext())
@@ -136,10 +136,19 @@ namespace vp_server.Controllers
             }
             return RedirectToAction("Index");
         }
-
         #region HTTPS
         [HttpPost]
-        public async Task<IActionResult> _Quantity(int idProduct, int quantity)//Либо же отправлять модель полностью и возвращать также
+        public async Task<IActionResult> GetDataAboutViews(int idProduct, DateOnly dateStart, DateOnly? dateEnd)//Передача данных в представление о просмотрах продукции
+        {
+            if (dateEnd != null)
+            {
+
+            }
+            return Json(1);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> _Quantity(int idProduct, int quantity)
         {
             using (VapeshopContext db = new VapeshopContext())
             {
