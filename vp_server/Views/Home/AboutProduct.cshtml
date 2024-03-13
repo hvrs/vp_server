@@ -63,7 +63,7 @@
                                 <input type="submit" class="btn btn-primary" value="Добавить" /> @Html.ActionLink("Удалить", "Delete", "Home", new { id = Model.Product.Id }, new { @class = "btn btn-danger" })
                             </p>
                             <p>
-                                <input type="text" name="daterange" value="01/01/2018 - 01/15/2018" />
+                                <input type="text" name="daterange" value="03/12/2024 - 01/15/2024" />
                                 <script type="text/javascript" src="~/js/datepicker/moment.min.js"></script>
                                 <script type="text/javascript" src="~/js/datepicker/daterangepicker.min.js"></script>
                                 <link rel="stylesheet" type="text/css" href="~/css/daterangepicker.css" />                                
@@ -92,8 +92,11 @@
                 url: URL,
                 type: 'POST',
                 data: { "idProduct": @Model.Product.Id, "dateStart": picker.startDate.format('DD-MM-YYYY'), "dateEnd": picker.endDate.format('DD-MM-YYYY') },
+                dataType: "json",
                 success: function (request) {
-                    alert("четко")
+                    var lst = JSON.parse(request);
+                    alert("Четко");
+                    
                 }
             });
         });
