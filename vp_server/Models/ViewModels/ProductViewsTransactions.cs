@@ -7,7 +7,7 @@
     }
     public class ProductViews
     {
-        public DateTime datetime { get; set; }
+        public string datetime { get; set; }
         public int count { get; set; } = 0;
     }
 

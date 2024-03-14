@@ -72,6 +72,38 @@ namespace vp_server.Controllers
                return View(PAC);
             }
         }
+        public IActionResult getjson()
+        {
+            using (VapeshopContext db = new VapeshopContext())
+            {
+                var dateStart = new DateOnly(2024, 03, 12);
+                List<ProductViews> PWlist = new List<ProductViews>();
+                
+                    List<View> vws = db.Views.Where(v => v.ProductId == 6).Where(v => v.Date == dateStart).OrderBy(v => v.Time).ToList();
+                    for (int i = 8; i <= 20; i++)
+                    {
+                        int Counter = 0;
+                        ProductViews PW = new ProductViews();
+                    /*PW.timeOnly = new TimeOnly(i,0);*/
+                    PW.datetime = new TimeOnly(i, 0).ToString();
+                    foreach (var item in vws)
+                        {
+                            if (item.Time >= new TimeOnly(i, 0) && item.Time < new TimeOnly(i + 1, 0))
+                            {
+                                Counter++;
+                            }
+                        }
+                        PW.count = Counter;
+                        PWlist.Add(PW);
+                    }
+
+                    //массив с х заполнить 1-24ч 
+                    //расположить значения просмотров/покупок по возрастанию времени проведения покупок/просмотров, т.е. 1 – сделаные в час ночи 12 – обед и тд
+                    //заполнить эти значения и отправить жэысоном 
+                    return Json(PWlist);
+                
+            }
+        }
 
         public IActionResult Menu()
         {
@@ -144,6 +176,21 @@ namespace vp_server.Controllers
                 if (dateEnd != dateStart)
                 {
                     List<View> vws = db.Views.Where(v => v.ProductId == idProduct).Where(v => v.Date >= dateStart).Where(v => v.Date <= dateEnd).OrderBy(v => v.Date).ThenBy(v => v.Time).ToList();
+                    for (DateOnly date = dateStart; date <= dateEnd; date = date.AddDays(1))
+                    {
+                        int Counter = 0;
+                        ProductViews PW = new ProductViews();
+                        PW.datetime = date.ToString();
+                        foreach (var view in vws)
+                        {
+                            if (view.Date == date)
+                            {
+                                Counter++;
+                            }
+                        }
+                        PW.count = Counter;
+                        PWlist.Add(PW);
+                    }
 
                 }
                 else
@@ -153,8 +200,10 @@ namespace vp_server.Controllers
                     {
                         int Counter = 0;
                         ProductViews PW = new ProductViews();
-                        /*PW.timeOnly = new TimeOnly(i,0);*/
-                        PW.datetime = dateStart.ToDateTime(new TimeOnly(i, 0));
+                        PW.datetime = new TimeOnly(i,0).ToString();
+                        //PW.datetime = dateStart.ToDateTime(new TimeOnly(i, 0));//Можно заменить на string, т.к. тип даты все равно не используется в JSON
+
+
                         foreach (var item in vws)
                         {
                             if (item.Time >= new TimeOnly(i,0) && item.Time < new TimeOnly(i+1,0))
@@ -169,9 +218,8 @@ namespace vp_server.Controllers
                     //массив с х заполнить 1-24ч 
                     //расположить значения просмотров/покупок по возрастанию времени проведения покупок/просмотров, т.е. 1 – сделаные в час ночи 12 – обед и тд
                     //заполнить эти значения и отправить жэысоном 
-                    return Json(PWlist);
                 }
-                return Json(1);
+                return Json(PWlist);
             }         
         }
 
