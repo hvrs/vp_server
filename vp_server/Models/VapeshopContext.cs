@@ -138,7 +138,6 @@ public partial class VapeshopContext : DbContext
         modelBuilder.Entity<Transaction>(entity =>
         {
             entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.IsViewed).HasColumnName("isViewed");
         });
 

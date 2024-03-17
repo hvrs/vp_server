@@ -7,7 +7,9 @@ public partial class Transaction
 {
     public int Id { get; set; }
 
-    public DateTime Date { get; set; }
+    public DateOnly Date { get; set; }
+
+    public TimeOnly Time { get; set; }
 
     public double Sum { get; set; }
 

@@ -8,7 +8,8 @@
     public class ProductViews
     {
         public string datetime { get; set; }
-        public int count { get; set; } = 0;
+        public int countViews { get; set; } = 0;
+        public int countBuyProduct { get; set; } = 0;
     }
 
 }

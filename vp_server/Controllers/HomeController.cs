@@ -93,7 +93,7 @@ namespace vp_server.Controllers
                                 Counter++;
                             }
                         }
-                        PW.count = Counter;
+                        PW.countViews = Counter;
                         PWlist.Add(PW);
                     }
 
@@ -123,10 +123,6 @@ namespace vp_server.Controllers
             ViewBag.strenght = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetStrenghts(), "Id", "Title");
             return View();
         }
-        public IActionResult jqTest()
-        {
-            return View();
-        }
         
         public IActionResult AboutProduct(int id)
         {
@@ -151,7 +147,8 @@ namespace vp_server.Controllers
                 ViewBag.strenght = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetStrenghts(), "Id", "Title", PVT.Product.StrengthId.ToString());
                 return View(PVT);
             }                
-        } 
+        }
+        
         public IActionResult Delete(int id)
         {
             using (VapeshopContext db = new VapeshopContext())
@@ -167,7 +164,7 @@ namespace vp_server.Controllers
         }
 
         #region HTTPS
-        [HttpPost]
+        [HttpPost]    
         public async Task<IActionResult> GetDataAboutViews(int idProduct, DateOnly dateStart, DateOnly? dateEnd)//Передача данных в представление о просмотрах продукции
         {
             using (VapeshopContext db = new VapeshopContext())
@@ -176,6 +173,7 @@ namespace vp_server.Controllers
                 if (dateEnd != dateStart)
                 {
                     List<View> vws = db.Views.Where(v => v.ProductId == idProduct).Where(v => v.Date >= dateStart).Where(v => v.Date <= dateEnd).OrderBy(v => v.Date).ThenBy(v => v.Time).ToList();
+                    IQueryable<TransactionsAndProduct> TAP = db.TransactionsAndProducts.Where(t => t.ProductId == idProduct).Include(t => t.Transaction).Where(t => (t.Transaction.Date >= dateStart) && (t.Transaction.Date <= dateEnd)).OrderBy(t => t.Transaction.Date).ThenBy(t => t.Transaction.Time);
                     for (DateOnly date = dateStart; date <= dateEnd; date = date.AddDays(1))
                     {
                         int Counter = 0;
@@ -188,22 +186,28 @@ namespace vp_server.Controllers
                                 Counter++;
                             }
                         }
-                        PW.count = Counter;
+                        PW.countViews = Counter;
+                        Counter = 0;
+                        foreach (var item in TAP)
+                        {
+                            if (item.Transaction.Date == date)
+                            {
+                                Counter += item.Quantitly;
+                            }
+                        }
+                        PW.countBuyProduct = Counter;
                         PWlist.Add(PW);
                     }
-
                 }
                 else
                 {                                     
-                    List<View> vws = db.Views.Where(v=>v.ProductId == idProduct).Where(v=>v.Date == dateStart).OrderBy(v=>v.Time).ToList();                    
+                    List<View> vws = db.Views.Where(v=>v.ProductId == idProduct).Where(v=>v.Date == dateStart).OrderBy(v=>v.Time).ToList();
+                    IQueryable<TransactionsAndProduct> TAP = db.TransactionsAndProducts.Where(t => t.ProductId == idProduct).Include(t => t.Transaction).Where(t => t.Transaction.Date == dateStart).OrderBy(t => t.Transaction.Time);
                     for (int i = 8; i <= 9; i++)
                     {
                         int Counter = 0;
                         ProductViews PW = new ProductViews();
                         PW.datetime = new TimeOnly(i,0).ToString();
-                        //PW.datetime = dateStart.ToDateTime(new TimeOnly(i, 0));//Можно заменить на string, т.к. тип даты все равно не используется в JSON
-
-
                         foreach (var item in vws)
                         {
                             if (item.Time >= new TimeOnly(i,0) && item.Time < new TimeOnly(i+1,0))
@@ -211,13 +215,18 @@ namespace vp_server.Controllers
                                 Counter++;
                             }                           
                         }
-                        PW.count = Counter;
+                        PW.countViews = Counter;
+                        Counter = 0;
+                        foreach (var item in TAP)
+                        {
+                            if (item.Transaction.Time >= new TimeOnly(i,0) && item.Transaction.Time < new TimeOnly(i+1,0))
+                            {
+                                Counter += item.Quantitly;
+                            }
+                        }
+                        PW.countBuyProduct = Counter;                        
                         PWlist.Add(PW);
                     }
-
-                    //массив с х заполнить 1-24ч 
-                    //расположить значения просмотров/покупок по возрастанию времени проведения покупок/просмотров, т.е. 1 – сделаные в час ночи 12 – обед и тд
-                    //заполнить эти значения и отправить жэысоном 
                 }
                 return Json(PWlist);
             }         
