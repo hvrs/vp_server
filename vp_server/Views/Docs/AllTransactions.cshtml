@@ -1,0 +1,51 @@
+﻿@using vp_server.Models;
+@model List<Transaction>
+@{
+    ViewBag.NamePage = "Продажи";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    string cls;
+}
+<!DOCTYPE html>
+<html>
+    <body>
+        <div class="main">
+            <div class="container">
+                <div class="marga">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Дата</th>
+                            <th scope="col">Сумма</th>
+                            </tr>                            
+                        </thead>
+                        <tbody>
+                        @foreach (var item in Model)
+                        {                           
+                            @if (item.IsViewed==true)
+                            {
+                                cls = "table-primary";
+                            }else
+                            {
+                                cls = "table-danger";
+                            }
+                            <tr class="@cls" onclick="location.href=''">
+                                <td>@item.Id</td>
+                                <td>@item.Date/@item.Time</td>
+                                <td>@item.Sum &#8381</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <style>
+        .table tbody tr:hover td,
+        .table tbody tr:hover th {
+            background-color: #fffabe;
+        }
+        </style>
+    </body>
+</html>
+<link href="~/css/DocsSheet.css" rel="stylesheet" />

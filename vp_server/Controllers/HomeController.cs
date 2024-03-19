@@ -71,39 +71,7 @@ namespace vp_server.Controllers
                };
                return View(PAC);
             }
-        }
-        public IActionResult getjson()
-        {
-            using (VapeshopContext db = new VapeshopContext())
-            {
-                var dateStart = new DateOnly(2024, 03, 12);
-                List<ProductViews> PWlist = new List<ProductViews>();
-                
-                    List<View> vws = db.Views.Where(v => v.ProductId == 6).Where(v => v.Date == dateStart).OrderBy(v => v.Time).ToList();
-                    for (int i = 8; i <= 20; i++)
-                    {
-                        int Counter = 0;
-                        ProductViews PW = new ProductViews();
-                    /*PW.timeOnly = new TimeOnly(i,0);*/
-                    PW.datetime = new TimeOnly(i, 0).ToString();
-                    foreach (var item in vws)
-                        {
-                            if (item.Time >= new TimeOnly(i, 0) && item.Time < new TimeOnly(i + 1, 0))
-                            {
-                                Counter++;
-                            }
-                        }
-                        PW.countViews = Counter;
-                        PWlist.Add(PW);
-                    }
-
-                    //массив с х заполнить 1-24ч 
-                    //расположить значения просмотров/покупок по возрастанию времени проведения покупок/просмотров, т.е. 1 – сделаные в час ночи 12 – обед и тд
-                    //заполнить эти значения и отправить жэысоном 
-                    return Json(PWlist);
-                
-            }
-        }
+        }      
 
         public IActionResult Menu()
         {
@@ -163,7 +131,7 @@ namespace vp_server.Controllers
             return RedirectToAction("Index");
         }
 
-        #region HTTPS
+        #region HTTP
         [HttpPost]    
         public async Task<IActionResult> GetDataAboutViews(int idProduct, DateOnly dateStart, DateOnly? dateEnd)//Передача данных в представление о просмотрах продукции
         {
@@ -172,7 +140,7 @@ namespace vp_server.Controllers
                 List<ProductViews> PWlist = new List<ProductViews>();
                 if (dateEnd != dateStart)
                 {
-                    List<View> vws = db.Views.Where(v => v.ProductId == idProduct).Where(v => v.Date >= dateStart).Where(v => v.Date <= dateEnd).OrderBy(v => v.Date).ThenBy(v => v.Time).ToList();
+                    IQueryable<View> vws = db.Views.Where(v => v.ProductId == idProduct).Where(v => v.Date >= dateStart).Where(v => v.Date <= dateEnd).OrderBy(v => v.Date).ThenBy(v => v.Time);
                     IQueryable<TransactionsAndProduct> TAP = db.TransactionsAndProducts.Where(t => t.ProductId == idProduct).Include(t => t.Transaction).Where(t => (t.Transaction.Date >= dateStart) && (t.Transaction.Date <= dateEnd)).OrderBy(t => t.Transaction.Date).ThenBy(t => t.Transaction.Time);
                     for (DateOnly date = dateStart; date <= dateEnd; date = date.AddDays(1))
                     {
@@ -200,10 +168,10 @@ namespace vp_server.Controllers
                     }
                 }
                 else
-                {                                     
-                    List<View> vws = db.Views.Where(v=>v.ProductId == idProduct).Where(v=>v.Date == dateStart).OrderBy(v=>v.Time).ToList();
+                {
+                    IQueryable<View> vws = db.Views.Where(v => v.ProductId == idProduct).Where(v => v.Date == dateStart).OrderBy(v => v.Time);
                     IQueryable<TransactionsAndProduct> TAP = db.TransactionsAndProducts.Where(t => t.ProductId == idProduct).Include(t => t.Transaction).Where(t => t.Transaction.Date == dateStart).OrderBy(t => t.Transaction.Time);
-                    for (int i = 8; i <= 9; i++)
+                    for (int i = 8; i <= 20; i++)
                     {
                         int Counter = 0;
                         ProductViews PW = new ProductViews();

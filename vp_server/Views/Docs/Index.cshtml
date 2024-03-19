@@ -1,0 +1,19 @@
+﻿@{
+    ViewBag.NamePage = "Отчетная документация";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html>
+    <body>
+        <div class="main">
+            <div class="container">
+            @using (Html.BeginForm("CreateDocument", "Docs", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="marga">
+
+                </div>
+            }
+            </div>
+        </div>
+    </body>
+</html>

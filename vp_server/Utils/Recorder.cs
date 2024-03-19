@@ -54,7 +54,7 @@ namespace vp_server.Utils
                                  Title = c.CategoryName
                              };
             return categories.ToList();
-        } 
+        }
 
     }
 }
