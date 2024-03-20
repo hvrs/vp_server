@@ -13,21 +13,21 @@ namespace vp_server.Controllers
         {
             return View();
         }
-        
+
         public IActionResult AllTransactions()
         {
             using (VapeshopContext db = new VapeshopContext())
             {
                 List<Models.Transaction> trs = db.Transactions.ToList();
                 return View(trs);
-            }  
+            }
         }
         public IActionResult InfoTransaction(int IdTransaction)
         {
             using (VapeshopContext db = new VapeshopContext())
             {
-                //List<TransactionsAndProduct> TAP = db.TransactionsAndProducts.Where(t=>t.TransactionId==IdTransaction).Include(t=>t.Product).ToList();
-                var products = from t in db.TransactionsAndProducts.Where(tp => tp.TransactionId == IdTransaction).Include(tp => tp.Product)
+
+                var products = from t in db.TransactionsAndProducts.Where(tp => tp.TransactionId == IdTransaction).Include(tp => tp.Product).Include(tp => tp.Transaction)
                                select new TransactionProductDTO()
                                {
                                    Id = t.Product.Id,
@@ -35,16 +35,16 @@ namespace vp_server.Controllers
                                    Cost = t.Product.Cost,
                                    Quality = t.Quantitly
                                };
-
-                return View(products.ToList());
-            }            
+                var status = db.Transactions.Where(tp => tp.Id == IdTransaction).Include(t => t.TransactionStatus).FirstOrDefault();
+                             
+                ProductsInTransactionWithStatus PTS = new ProductsInTransactionWithStatus
+                {
+                    tpDTO = products.ToList(),
+                    Status = status.TransactionStatus.Title
+                };
+                return View(PTS);
+            }
         }
-        #region HTTP
-        /*[HttpPost]
-        public async Task<IActionResult> CreateDocument()
-        {
-            
-        }*/
-        #endregion
     }
 }
+

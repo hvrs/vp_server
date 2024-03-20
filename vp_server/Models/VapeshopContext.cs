@@ -31,6 +31,8 @@ public partial class VapeshopContext : DbContext
 
     public virtual DbSet<Transaction> Transactions { get; set; }
 
+    public virtual DbSet<TransactionStatus> TransactionStatuses { get; set; }
+
     public virtual DbSet<TransactionsAndProduct> TransactionsAndProducts { get; set; }
 
     public virtual DbSet<View> Views { get; set; }
@@ -139,6 +141,19 @@ public partial class VapeshopContext : DbContext
         {
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.IsViewed).HasColumnName("isViewed");
+            entity.Property(e => e.TransactionStatusId).HasColumnName("TransactionStatusID");
+
+            entity.HasOne(d => d.TransactionStatus).WithMany(p => p.Transactions)
+                .HasForeignKey(d => d.TransactionStatusId)
+                .HasConstraintName("FK_Transactions_TransactionStatus");
+        });
+
+        modelBuilder.Entity<TransactionStatus>(entity =>
+        {
+            entity.ToTable("TransactionStatus");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Title).HasMaxLength(50);
         });
 
         modelBuilder.Entity<TransactionsAndProduct>(entity =>

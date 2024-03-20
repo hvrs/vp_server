@@ -141,7 +141,7 @@ namespace vp_server.Controllers
                 if (dateEnd != dateStart)
                 {
                     IQueryable<View> vws = db.Views.Where(v => v.ProductId == idProduct).Where(v => v.Date >= dateStart).Where(v => v.Date <= dateEnd).OrderBy(v => v.Date).ThenBy(v => v.Time);
-                    IQueryable<TransactionsAndProduct> TAP = db.TransactionsAndProducts.Where(t => t.ProductId == idProduct).Include(t => t.Transaction).Where(t => (t.Transaction.Date >= dateStart) && (t.Transaction.Date <= dateEnd)).OrderBy(t => t.Transaction.Date).ThenBy(t => t.Transaction.Time);
+                    IQueryable<TransactionsAndProduct> TAP = db.TransactionsAndProducts.Where(t => t.ProductId == idProduct).Include(t => t.Transaction).Where(t => (t.Transaction.Date >= dateStart) && (t.Transaction.Date <= dateEnd) &&(t.Transaction.TransactionStatusId !=3)).OrderBy(t => t.Transaction.Date).ThenBy(t => t.Transaction.Time);
                     for (DateOnly date = dateStart; date <= dateEnd; date = date.AddDays(1))
                     {
                         int Counter = 0;

@@ -22,10 +22,15 @@
                         <tbody>
                         @foreach (var item in Model)
                         {                           
-                            @if (item.IsViewed==true)
+                            @if (item.IsViewed==true && item.TransactionStatusId==2)
                             {
                                 cls = "table-primary";
-                            }else
+                            }
+                            else if (item.IsViewed == true && item.TransactionStatusId == 1)
+                            {
+                                cls = "table-warning";
+                            }
+                            else
                             {
                                 cls = "table-danger";
                             }

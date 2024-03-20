@@ -15,5 +15,9 @@ public partial class Transaction
 
     public bool IsViewed { get; set; }
 
+    public int TransactionStatusId { get; set; }
+
+    public virtual TransactionStatus TransactionStatus { get; set; } = null!;
+
     public virtual ICollection<TransactionsAndProduct> TransactionsAndProducts { get; set; } = new List<TransactionsAndProduct>();
 }

@@ -1,4 +1,4 @@
-﻿namespace vp_server.Models.ViewModels
+﻿namespace vp_server.Models
 {
     public class TransactionProductDTO//Для передачи данных в представление с информацией о продуктах, входящих в транзакицю
     {

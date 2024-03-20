@@ -1,9 +1,10 @@
 ﻿@using vp_server.Models.ViewModels
-@model List<TransactionProductDTO>
+@model vp_server.Models.ViewModels.ProductsInTransactionWithStatus
 @{
     ViewBag.NamePage = "О транзакции";
     Layout = "/Views/Shared/_Layout.cshtml";
 }
+   
 <!DOCTYPE html>
 <html>
     <body>
@@ -21,7 +22,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model)
+                            @foreach (var item in Model.tpDTO)
                             {
                                 <tr onclick="location.href='@Url.Action("AboutProduct", "Home", new{id=item.Id})'">
                                     <td>@item.Id</td>
@@ -35,7 +36,7 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <label>Статус транзакции:</label>
+                            <label>Статус транзакции: @Model.Status</label>
                         </div>
                         <div class="col">
                             <input class="btn bg-success" value="Подтвердить" type="button"/>
