@@ -1,0 +1,55 @@
+﻿@using vp_server.Models.ViewModels
+@model List<TransactionProductDTO>
+@{
+    ViewBag.NamePage = "О транзакции";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html>
+    <body>
+        <div class="main">
+            <div class="container">
+                <div class="marga">
+                    <div class="row">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID Продукта</th>
+                                <th scope="col">Название</th>
+                                <th scope="col">Стоимость за шт.</th>
+                                <th scope="col">Количество</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr onclick="location.href='@Url.Action("AboutProduct", "Home", new{id=item.Id})'">
+                                    <td>@item.Id</td>
+                                    <td>@item.Name</td>
+                                    <td>@item.Cost</td>
+                                    <td>@item.Quality</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label>Статус транзакции:</label>
+                        </div>
+                        <div class="col">
+                            <input class="btn bg-success" value="Подтвердить" type="button"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <style>
+        .table tbody tr:hover td,
+        .table tbody tr:hover th {
+            background-color: #fffabe;
+        }
+        </style>
+    </body>
+</html>
+<link href="~/css/DocsSheet.css" rel="stylesheet" />

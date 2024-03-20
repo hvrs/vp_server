@@ -29,7 +29,7 @@
                             {
                                 cls = "table-danger";
                             }
-                            <tr class="@cls" onclick="location.href=''">
+                            <tr class="@cls" onclick="location.href='@Url.Action("InfoTransaction","Docs", new{IdTransaction = item.Id})'">
                                 <td>@item.Id</td>
                                 <td>@item.Date/@item.Time</td>
                                 <td>@item.Sum &#8381</td>
