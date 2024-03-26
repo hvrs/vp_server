@@ -43,11 +43,12 @@ namespace vp_server.Utils
                 return db.Strenghts.ToList();
         }
         //Передать во ViewBag категории только с двумя параметрами
+
         public List<CategoriesDTO> GetTrueCategories()
         {
             //Воткнуть тут выборку определенных категорий, которые можно приписать к продукции
 
-            var categories = from c in dba.Categories
+            var categories = from c in dba.Categories.Where(c=>c.ParentCategoryId != null)
                              select new CategoriesDTO()
                              {
                                  Id = c.Id,

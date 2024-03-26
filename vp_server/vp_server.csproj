@@ -31,4 +31,8 @@
     <None Include="wwwroot\images\stub.jpg" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Files\" />
+  </ItemGroup>
+
 </Project>

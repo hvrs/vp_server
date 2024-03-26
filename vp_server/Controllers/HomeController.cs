@@ -110,6 +110,7 @@ namespace vp_server.Controllers
                     Count = cotn._count.Value
                 };
                 ViewBag.manufacturers = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetManufacturers(), "Id", "Title", PVT.Product.ManufacturerId.ToString());
+
                 ViewBag.categories = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetTrueCategories(), "Id", "Title", PVT.Product.CategoryId.ToString());
                 ViewBag.nicotine = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetNicotineType(), "Id", "Title", PVT.Product.NicotineTypeId.ToString());
                 ViewBag.strenght = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.GetStrenghts(), "Id", "Title", PVT.Product.StrengthId.ToString());

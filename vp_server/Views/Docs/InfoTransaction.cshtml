@@ -36,10 +36,10 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <label>Статус транзакции: @Model.Status</label>
+                        <label>Статус транзакции:</label>  <input id="stst" value="@Model.Status" disabled />
                         </div>
                         <div class="col">
-                            <input class="btn bg-success" value="Подтвердить" type="button"/>
+                            <input id="btnAccept" class="btn bg-success" value="Подтвердить" type="button"/>
                         </div>
                     </div>
                 </div>
@@ -51,6 +51,24 @@
             background-color: #fffabe;
         }
         </style>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#btnAccept").click(function () {
+                    $.ajax({
+                        url: '@Url.Action("SetAccept","Docs")',
+                        type: 'POST',
+                        data: {"idTransaction": @Model.Id},
+                        dataType: "json",
+                        success: function (request) {
+                            alert("Заказ подтвержден");
+                        $("#stst").val(request)
+                    }, error: function () {
+                        alert("Неудача((")
+                    }
+                    });
+                });
+            });
+        </script>
     </body>
 </html>
 <link href="~/css/DocsSheet.css" rel="stylesheet" />

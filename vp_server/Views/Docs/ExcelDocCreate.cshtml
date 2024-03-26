@@ -6,14 +6,36 @@
 <html>
     <body>
         <div class="main">
-            <div class="container">
-            @using (Html.BeginForm("CreateDocument", "Docs", FormMethod.Post, new { enctype = "multipart/form-data" }))
-            {
+            <div class="container">         
                 <div class="marga">
+                @using (Html.BeginForm("CreateDocument", "Docs", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                   <p>                     
+                       <input type="submit" class="btn btn-primary" value="создать"/>
 
+                   </p> 
+                }
+                <p>
+                       <label>Период:</label>
+                        <input type="text" name="daterange" value="03/12/2024 - 01/15/2024"/>
+                        <script type="text/javascript" src="~/js/datepicker/moment.min.js"></script>
+                        <script type="text/javascript" src="~/js/datepicker/daterangepicker.min.js"></script>
+                        <link rel="stylesheet" type="text/css" href="~/css/daterangepicker.css" />
+                   </p>
                 </div>
-            }
             </div>
         </div>
+        <script type="text/javascript">
+            $('input[name="daterange"]').daterangepicker();
+            $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
+            $.ajax({
+                url: '@Url.Action("CreateDocument", "Docs")',
+                type: 'POST',
+                data: { "dateStart": picker.startDate.format('DD-MM-YYYY'), "dateEnd": picker.endDate.format('DD-MM-YYYY') },
+                dataType: "json"
+            });
+        </script>
     </body>
 </html>
+<link href="~/css/homeStyle.css" rel="stylesheet" />
+
