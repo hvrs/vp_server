@@ -17,6 +17,8 @@ public partial class VapeshopContext : DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
+    public virtual DbSet<ExcelDocument> ExcelDocuments { get; set; }
+
     public virtual DbSet<Manufacturer> Manufacturers { get; set; }
 
     public virtual DbSet<NicotineType> NicotineTypes { get; set; }
@@ -54,6 +56,13 @@ public partial class VapeshopContext : DbContext
             entity.HasOne(d => d.ParentCategory).WithMany(p => p.InverseParentCategory)
                 .HasForeignKey(d => d.ParentCategoryId)
                 .HasConstraintName("FK_Category_Category");
+        });
+
+        modelBuilder.Entity<ExcelDocument>(entity =>
+        {
+            entity.ToTable("ExcelDocument");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
         });
 
         modelBuilder.Entity<Manufacturer>(entity =>

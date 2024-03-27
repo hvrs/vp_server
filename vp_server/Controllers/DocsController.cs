@@ -23,6 +23,7 @@ namespace vp_server.Controllers
                 return View(trs);
             }
         }
+
         public IActionResult InfoTransaction(int IdTransaction)
         {
             using (VapeshopContext db = new VapeshopContext())
@@ -71,18 +72,18 @@ namespace vp_server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateDocument(string dateStart, string dateEnd)
+        public async Task<IActionResult> CreateDocument(DateOnly dateStart, DateOnly dateEnd)
         {
             using (VapeshopContext db = new VapeshopContext())
             {
                 ExcelDataModel excelData = new ExcelDataModel
                 {
-                    totalSales = db.Transactions./*Where(ts => (ts.Date >= dateStart) && (ts.Date <= dateEnd) && (ts.IsViewed == true) && (ts.TransactionStatusId == 2)).*/Count(),              
-                    totalSum = (float)db.Transactions./*Where(ts => (ts.Date >= dateStart) && (ts.Date <= dateEnd) && (ts.IsViewed == true) && (ts.TransactionStatusId == 2)).*/Sum(ts => ts.Sum),
+                    totalSales = db.Transactions.Where(ts => (ts.Date >= dateStart) && (ts.Date <= dateEnd) && (ts.IsViewed == true) && (ts.TransactionStatusId == 2)).Count(),              
+                    totalSum = (float)db.Transactions.Where(ts => (ts.Date >= dateStart) && (ts.Date <= dateEnd) && (ts.IsViewed == true) && (ts.TransactionStatusId == 2)).Sum(ts => ts.Sum),
                     productRest = db.ProductCounts.Sum(pc => pc.Count),
-                    productReceipt = db.ReplenishmentProducts/*.Where(rp=>(rp.Date >= dateStart) && (rp.Date <= dateEnd))*/.Sum(rp=>rp.Quantity),
+                    productReceipt = db.ReplenishmentProducts.Where(rp=>(rp.Date >= dateStart) && (rp.Date <= dateEnd)).Sum(rp=>rp.Quantity),
                     //Поступившая за выбранный промежуток продукция
-                    receiptProducts = from p in db.ReplenishmentProducts.Include(rp=>rp.Product).Include(rp=>rp.Product.ProductCounts)/*.Where(rp=>(rp.Date >= dateStart) && (rp.Date <= dateEnd))*/
+                    receiptProducts = from p in db.ReplenishmentProducts.Include(rp=>rp.Product).Include(rp=>rp.Product.ProductCounts).Where(rp=>(rp.Date >= dateStart) && (rp.Date <= dateEnd))
                                    select new receiptProduct()
                                    {
                                        productName = p.Product.Title,
@@ -103,13 +104,31 @@ namespace vp_server.Controllers
                 
                 var Excel = new ExcelGenerator()
                     .Generate(excelData);
-                //var exePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files\\Отчет.xlsx"));
-               
 
-               return File(Excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Отчет {dateEnd}.xlsx");
+                ExcelDocument? excelSave = db.ExcelDocuments.Where(x => x.Id == 1).FirstOrDefault();
+                if (excelSave != null)
+                {
+                    excelSave.DocExcel = Excel;
+                    await db.SaveChangesAsync();
+                }               
+                //var exePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files\\"));                                                             
+                return Ok(1);
+
+              // return File(Excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Отчет {dateEnd}.xlsx");
             }           
         }
-
+        public async Task<IActionResult> Download(int id)
+        {
+            using (VapeshopContext db = new VapeshopContext())
+            {
+                byte[]? Excel = db.ExcelDocuments.Where(i => i.Id == id).Select(i => i.DocExcel).FirstOrDefault();
+                if (Excel != null)
+                {
+                    return File(Excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Отчет.xlsx");
+                }
+                return BadRequest();
+            }
+        }
         #endregion
     }
 }
