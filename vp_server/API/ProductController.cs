@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using vp_server.Models;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace vp_server.API
 {
@@ -8,36 +9,30 @@ namespace vp_server.API
     [ApiController]
     public class ProductController : ControllerBase
     {
+        public VapeshopContext db = new VapeshopContext();
         // GET: api/<ProductController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> Get()
         {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<ProductController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<ProductController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<ProductController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<ProductController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+            try
+            {
+              var products = from pc in db.ProductCounts.Where(pc => pc.Count > 0).Include(pc => pc.Product).Include(pc => pc.Product.NicotineType).Include(pc => pc.Product.Category).Include(pc => pc.Product.Manufacturer).Include(pc => pc.Product.Strength)
+                             select new ProductDTO
+                             {
+                                 Id = pc.ProductId,
+                                 NameProduct = pc.Product.Title,
+                                 Photo = pc.Product.Image,
+                                 Category = pc.Product.Category.CategoryName,
+                                 Manufacturer = pc.Product.Manufacturer.Title,
+                                 Nicotine = pc.Product.NicotineType.Title,
+                                 Strength = pc.Product.Strength.Title
+                             };
+                return Ok(products);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }      
     }
 }
