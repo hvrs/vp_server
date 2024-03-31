@@ -15,40 +15,40 @@
                         <div class="row">
                         <div class="col-lg">
                             <p>
-                                <label>Название:</label>
+                                <label class="form-label">Название:</label>
                                 <input type="text" class="form-control" asp-for="Title" />
                                 <span asp-validation-for="Title" />
                             </p>
                             <p>
-                                <label>Стоимость:</label>
+                                <label class="form-label">Стоимость:</label>
                                 <input type="number" class="form-control" asp-for="Cost" />
                                 <span asp-validation-for="Cost" />
                             </p>
                             <p>
-                                <label>Материал:</label>
+                                <label class="form-label">Материал:</label>
                                 @Html.TextBoxFor(p => p.Material,null,new{@class="form-control"})
                             </p>
                             <p>
-                                <label>Количество на складе:</label>
+                                <label class="form-label">Количество на складе:</label>
                                 @Html.TextBox("quantity", null, new { @class = "form-control" })
                             </p>
                             <p>
-                                <label>Производитель:</label>
+                                <label class="form-label">Производитель:</label>
                                 @Html.DropDownListFor(p => p.ManufacturerId, ViewBag.manufacturers as SelectList, null, new { @class = "form-control" })
                             </p>
                             <p>
-                                <label>Категория:</label>
+                                <label class="form-label">Категория:</label>
                                 @Html.DropDownListFor(p => p.CategoryId, ViewBag.categories as SelectList, null, new { @class = "form-control" })
                             </p>
                             <p>
-                                <label>Содержание никотина:</label>
+                                <label class="form-label">Содержание никотина:</label>
                                 @Html.DropDownListFor(p => p.NicotineTypeId, ViewBag.nicotine as SelectList, null, new { @class = "form-control" })
                             </p>
                             <p>
-                                <label>Крепкость:</label>
+                                <label class="form-label">Крепкость:</label>
                                 @Html.DropDownListFor(p => p.StrengthId, ViewBag.strenght as SelectList, null, new { @class = "form-control" })
                             </p>
-                            <p><label>Изображение:</label></p>
+                            <p><label class="form-label">Изображение:</label></p>
                             <p>                               
                                 <label>
                                     <img id="uploadPreview" style='width:400px; height:400px;' class="rounded-3" src="/images/stub.jpg" />

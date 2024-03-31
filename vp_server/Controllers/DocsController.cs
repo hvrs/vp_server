@@ -5,6 +5,7 @@ using vp_server.Models;
 using vp_server.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
+using OfficeOpenXml;
 
 namespace vp_server.Controllers
 {
@@ -55,6 +56,40 @@ namespace vp_server.Controllers
         }
 
         #region HTTP
+        [HttpPost]
+        public IActionResult excelToDatabase(IFormFile excelFile)//Получение Excel файла, его обработка и запись данных в List
+        {
+            if (excelFile != null)
+            {
+                var stream = excelFile.OpenReadStream();
+                
+                using (ExcelPackage package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    int colCount = worksheet.Dimension.End.Column;
+                    int rowCount = worksheet.Dimension.End.Row;
+                    ValidateExcel validate = new ValidateExcel();
+                    if (validate.columnValidate(worksheet))
+                    {//Необходимо записать данные в List 
+
+
+                        return Content($"столбцы: {colCount}, строки: {rowCount}");
+                    }
+                    else
+                    {
+                        return Content($"столбцы не соответствуют принимаемой форме");
+                    }
+
+
+                }
+            }
+            else
+            {
+                return BadRequest();
+            }
+            
+        }
+
         [HttpPost]
         public async Task<IActionResult> SetAccept(int idTransaction)
         {
@@ -110,13 +145,14 @@ namespace vp_server.Controllers
                 {
                     excelSave.DocExcel = Excel;
                     await db.SaveChangesAsync();
-                }               
+                }
                 //var exePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files\\"));                                                             
                 return Ok(1);
 
-              // return File(Excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Отчет {dateEnd}.xlsx");
-            }           
+                //return File(Excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Отчет {dateStart}-{dateEnd}.xlsx");
+            }
         }
+        #endregion
         public async Task<IActionResult> Download(int id)
         {
             using (VapeshopContext db = new VapeshopContext())
@@ -129,7 +165,6 @@ namespace vp_server.Controllers
                 return BadRequest();
             }
         }
-        #endregion
     }
 }
 

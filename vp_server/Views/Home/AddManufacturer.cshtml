@@ -10,7 +10,7 @@
             @using (Html.BeginForm("CreateManufacturer", "Home", FormMethod.Post))
             {
                 <p>
-                    <label>Название производителя:</label>
+                    <label class="form-label">Название производителя:</label>
                     <input type="text" asp-for="Title" class="form-control" />
                     <span asp-validation-for="Title" />
                 </p>

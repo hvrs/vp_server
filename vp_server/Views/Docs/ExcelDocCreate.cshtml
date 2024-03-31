@@ -7,36 +7,71 @@
     <body>
         <div class="main">
             <div class="container">         
-                <div class="marga">                
-                <p>
-                       <label>Период:</label>
-                        <input type="text" name="daterange" value="03/12/2024 - 01/15/2024"/>
+                <div class="marga">
+                    <div class="row">
+                        <div class="col">
+                        <label class="form-label">Период:</label>
+                        <input type="text" name="daterange" value="03/12/2024 - 01/15/2024" class="form-control" />
                         <script type="text/javascript" src="~/js/datepicker/moment.min.js"></script>
                         <script type="text/javascript" src="~/js/datepicker/daterangepicker.min.js"></script>
                         <link rel="stylesheet" type="text/css" href="~/css/daterangepicker.css" />
-                   </p>
+                        </div>
+                        <div class="col">
+                        @using (Html.BeginForm("excelToDatabase", "Docs", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <p>
+                                <label for="uploadExcel" class="form-label">Загрузить файл Excel:</label>
+                                <input class="form-control" id="uploadExcel" type="file" name="ExcelFile" enctype="multipart/form-data" />
+                            </p>
+                            <p>
+                                <input type="submit" class="btn btn-primary" value="Отправить файл" id="btnSendExcel" disabled="disabled"/>
+                            </p>
+                        }
+
+                                            
+                        </div>                                          
+                    </div>                                 
                 </div>
             </div>
         </div>
         <script type="text/javascript">
             $('input[name="daterange"]').daterangepicker();
             $('input[name="daterange"]').on('apply.daterangepicker', function (ev, picker) {
-                $.ajax({
-                    url: '@Url.Action("CreateDocument", "Docs")',
-                    type: 'POST',
-                    data: { "dateStart": picker.startDate.format('DD-MM-YYYY'), "dateEnd": picker.endDate.format('DD-MM-YYYY') },
-                    dataType: "json",
-                    success: function (request) {
-                        window.location = '/Docs/Download?id=' + request;
-                    },
-                    error: function (err) {
-                        alert(err);
+            $.ajax({
+                url: '@Url.Action("CreateDocument", "Docs")',
+                type: 'POST',
+                data: { "dateStart": picker.startDate.format('DD-MM-YYYY'), "dateEnd": picker.endDate.format('DD-MM-YYYY') },
+                dataType: "json",
+                success: function (request) {
+                    window.location = '/Docs/Download?id=' + request;
+                },
+                error: function (err) {
+                    alert(err);
+                }
+
+            });
+
+            });
+
+            document.getElementById('uploadExcel').addEventListener('change', function () {
+                var fileExtension = ['xlsx'];
+                if (this.value) {
+                    if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+                        alert("Загружаемый файл имеет формат, отличный от поддерживаемого – .xlsx")
+                    $('#btnSendExcel').prop('disabled', true);
+                    } else {
+                        $('#btnSendExcel').prop('disabled', false);
+
                     }
 
-                });
+                    
+                } else {
+                    alert("файл не выбран")
+                }
             });
         </script>
+
     </body>
 </html>
 <link href="~/css/homeStyle.css" rel="stylesheet" />
-
+      

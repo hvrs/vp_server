@@ -12,6 +12,8 @@
            <form method="get">
                <div class="form-check-inline">
                    <label class="control-table">Название</label>
+                   @Html.TextBox("category",Model.categroyNow,"number",new{@hidden = "hidden"})
+
                    @Html.TextBox("name")
                    <label class="control-table">Производитель:</label>
                    @Html.DropDownList("manufacturer", Model.Manufacturers as SelectList, htmlAttributes: new {@class = "btn btn-sm dropdown-toggle"})

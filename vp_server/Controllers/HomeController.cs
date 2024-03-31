@@ -42,7 +42,11 @@ namespace vp_server.Controllers
                     if (category != null)
                     {
                         var ctg = db.Categories.Where(c => c.ParentCategoryId == category).ToList();
-                        productList = products.Where(p => p.CategoryId == category).ToList();
+                        if(manufacturer !=0 && manufacturer !=null)
+                            productList = products.Where(p => (p.CategoryId == category) && (p.ManufacturerId == manufacturer)).ToList();
+                        else
+                            productList = products.Where(p => p.CategoryId == category).ToList();
+
                         if (ctg.Count != 0)
                         {
                             foreach (var ct in ctg)
@@ -55,9 +59,12 @@ namespace vp_server.Controllers
                     }
                     else
                     {
-                        productList = products.ToList();
+                        if (manufacturer != 0 && manufacturer != null)
+                            productList = products.Where(p => p.ManufacturerId == manufacturer).ToList();
+                        else
+                            productList = products.ToList();
                     }
-                    if (manufacturer != null && manufacturer !=0)
+                    if (manufacturer != null && manufacturer !=0 && name==null && category==null)
                         productList = products.Where(p => p.ManufacturerId == manufacturer).ToList();
 
                 }
@@ -67,7 +74,8 @@ namespace vp_server.Controllers
                {
                     Products = productList,
                     Categories = db.Categories.ToList(),
-                    Manufacturers = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(manufacturers, "Id", "Title")
+                    Manufacturers = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(manufacturers, "Id", "Title"),
+                    categroyNow = category
                };
                return View(PAC);
             }
