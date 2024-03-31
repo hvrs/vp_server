@@ -71,9 +71,20 @@ namespace vp_server.Controllers
                     ValidateExcel validate = new ValidateExcel();
                     if (validate.columnValidate(worksheet))
                     {//Необходимо записать данные в List 
+                        List<ProductExcelDTO> excelProductsList = new List<ProductExcelDTO>();
 
-
-                        return Content($"столбцы: {colCount}, строки: {rowCount}");
+                        for (int r = 2; r < rowCount; r++)
+                        {                            
+                            string[] infos = new string[9];
+                            for (int c = 1; c <= colCount; c++)
+                            {
+                               
+                            }
+                            
+                            //excelProductsList.Add(productExcel);
+                        }
+                        
+                        return Content($"столбцы: {colCount}, строки: {rowCount}");                      
                     }
                     else
                     {
