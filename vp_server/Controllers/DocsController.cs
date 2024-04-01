@@ -54,6 +54,11 @@ namespace vp_server.Controllers
                 return View(PTS);
             }
         }
+        public IActionResult AddedProducts()
+        {
+            
+            return View(model);
+        }
 
         #region HTTP
         [HttpPost]
@@ -65,33 +70,18 @@ namespace vp_server.Controllers
                 
                 using (ExcelPackage package = new ExcelPackage(stream))
                 {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    int colCount = worksheet.Dimension.End.Column;
-                    int rowCount = worksheet.Dimension.End.Row;
-                    ValidateExcel validate = new ValidateExcel();
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];                   
+                    ExcelGenerate validate = new ExcelGenerate();
                     if (validate.columnValidate(worksheet))
-                    {//Необходимо записать данные в List 
-                        List<ProductExcelDTO> excelProductsList = new List<ProductExcelDTO>();
-
-                        for (int r = 2; r < rowCount; r++)
-                        {                            
-                            string[] infos = new string[9];
-                            for (int c = 1; c <= colCount; c++)
-                            {
-                               
-                            }
-                            
-                            //excelProductsList.Add(productExcel);
-                        }
+                    {
+                        IEnumerable<ProductExcelDTO> excelCollection = worksheet.FromSheetToModel<ProductExcelDTO>();
                         
-                        return Content($"столбцы: {colCount}, строки: {rowCount}");                      
+                        return RedirectToAction("AddedProducts", "Docs");                  
                     }
                     else
                     {
                         return Content($"столбцы не соответствуют принимаемой форме");
                     }
-
-
                 }
             }
             else
@@ -148,7 +138,7 @@ namespace vp_server.Controllers
                 };
  
                 
-                var Excel = new ExcelGenerator()
+                var Excel = new ExcelGenerate()
                     .Generate(excelData);
 
                 ExcelDocument? excelSave = db.ExcelDocuments.Where(x => x.Id == 1).FirstOrDefault();

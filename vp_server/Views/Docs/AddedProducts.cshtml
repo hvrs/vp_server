@@ -1,0 +1,52 @@
+﻿@using vp_server.Models;
+@model List<ProductExcelDTO>
+@{
+    ViewBag.NamePage = "Проверка продукции перед добавлением";
+   //Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+    <body>
+        <div class="main">
+            <div class="container">
+                <div class="marga">
+                    <div class="row">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Название</th>
+                                <th scope="col">Стоимость</th>
+                                <th scope="col">Материал</th>
+                                <th scope="col">Вкус</th>
+                                <th scope="col">Категория</th>
+                                <th scope="col">Содержание никотина</th>
+                                <th scope="col">Крепкость</th>
+                                <th scope="col">Производитель</th>
+                                <th scope="col">Количество на складе</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Title</td>
+                                    <td>@item.Cost</td>
+                                    <td>@item.Material</td>
+                                    <td>@item.Taste</td>
+                                    <td>@item.Category</td>
+                                    <td>@item.Nicotine</td>
+                                    <td>@item.Strength</td>
+                                    <td>@item.Manufacturer</td>
+                                    <td>@item.Count</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>                   
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<link href="~/css/DocsSheet.css" rel="stylesheet" />

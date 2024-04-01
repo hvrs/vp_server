@@ -12,7 +12,7 @@ namespace vp_server.API
         public VapeshopContext db = new VapeshopContext();
         // GET: api/<ProductController>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> Get()
+        public ActionResult<IEnumerable<ProductDTO>> Get()
         {
             try
             {
