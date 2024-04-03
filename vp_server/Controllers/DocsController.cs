@@ -6,6 +6,7 @@ using vp_server.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using OfficeOpenXml;
+using System.Text.Json;
 
 namespace vp_server.Controllers
 {
@@ -56,26 +57,101 @@ namespace vp_server.Controllers
         }
         public IActionResult AddedProducts()
         {
-            
-            return View(model);
+            var list = JsonSerializer.Deserialize<List<ProductExcelDTO>>(TempData["list"].ToString());
+            return View(list);
         }
 
         #region HTTP
         [HttpPost]
-        public IActionResult excelToDatabase(IFormFile excelFile)//Получение Excel файла, его обработка и запись данных в List
+        public async Task<IActionResult> excelToDatabase(IFormFile excelFile)//Получение Excel файла, его обработка и запись данных в List
         {
+            
             if (excelFile != null)
             {
                 var stream = excelFile.OpenReadStream();
                 
                 using (ExcelPackage package = new ExcelPackage(stream))
-                {
+                {                    
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[0];                   
                     ExcelGenerate validate = new ExcelGenerate();
                     if (validate.columnValidate(worksheet))
                     {
                         IEnumerable<ProductExcelDTO> excelCollection = worksheet.FromSheetToModel<ProductExcelDTO>();
-                        
+                        TempData["list"] = JsonSerializer.Serialize(excelCollection);
+                        using (VapeshopContext db = new VapeshopContext())
+                        {                          
+                            foreach (var i in excelCollection)
+                            {                                
+                                if (db.Categories.Any(c=>c.CategoryName.ToLower() == i.Category.ToLower()))//Проверка на то, что категория товара, переданного из Excel есть в БД
+                                {                                   
+                                    Product product = new Product();//Проверка на null!!!
+                                    if (db.NicotineTypes.Any(nt => nt.Title.ToLower() == i.Nicotine.ToLower()))
+                                    {
+                                        product.NicotineTypeId = db.NicotineTypes.Where(nt => nt.Title.ToLower() == i.Nicotine.ToLower()).FirstOrDefault().Id;
+                                    }
+                                    else if (i.Nicotine != null)
+                                    {
+                                        NicotineType nicotineType = new NicotineType
+                                        {
+                                            Title = i.Nicotine
+                                        };
+                                        db.NicotineTypes.Add(nicotineType);
+                                        db.SaveChangesAsync();
+                                        product.NicotineTypeId = nicotineType.Id;
+                                    }
+                                    if (db.Manufacturers.Any(m => m.Title.ToLower() == i.Manufacturer.ToLower()))
+                                    {
+                                        product.ManufacturerId = db.Manufacturers.Where(m => m.Title.ToLower() == i.Manufacturer.ToLower()).FirstOrDefault().Id;
+                                    }
+                                    else if (i.Manufacturer != null)
+                                    {
+                                        Manufacturer manufacturer = new Manufacturer
+                                        {
+                                            Title = i.Manufacturer
+                                        };
+                                        db.Manufacturers.Add(manufacturer);
+                                        db.SaveChangesAsync();
+                                        product.ManufacturerId = manufacturer.Id;
+                                    }
+                                    if (db.Strenghts.Any(s=>s.Title.ToLower() == i.Strength.ToLower()))
+                                    {
+                                        product.StrengthId = db.Strenghts.Where(s => s.Title.ToLower() == i.Strength.ToLower()).FirstOrDefault().Id;
+                                    }
+                                    else if(i.Strength != null)
+                                    {
+                                        Strenght strenght = new Strenght
+                                        {
+                                            Title = i.Strength
+                                        };
+                                        db.Strenghts.Add(strenght);
+                                        db.SaveChangesAsync();
+                                        product.StrengthId= strenght.Id;
+                                    }
+                                    //Чтото возможно не так.Нужно придумать решение, если невозможные для null поля будут все же равны null
+                                    product.CategoryId = db.Categories.Where(c => c.CategoryName.ToLower() == i.Category.ToLower()).FirstOrDefault().Id;
+                                    if (product.ManufacturerId !=null)
+                                    {
+                                        product.Title = i.Title;
+                                        product.Cost = i.Cost;
+                                        product.Material = i.Material;
+                                        product.Taste = i.Taste;                                         
+                                        product.Image = System.IO.File.ReadAllBytes(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Utils\\stub.jpg")));
+
+                                        db.Products.Add(product);
+                                        await db.SaveChangesAsync();
+
+                                        ProductCount PC = new ProductCount();
+                                        PC.ProductId = product.Id;
+                                        if (i.Count >= 0)
+                                            PC.Count = i.Count;
+                                        else
+                                            PC.Count = 0;
+                                        db.ProductCounts.Add(PC);
+                                        await db.SaveChangesAsync();
+                                    }
+                                }                               
+                            }
+                        }
                         return RedirectToAction("AddedProducts", "Docs");                  
                     }
                     else

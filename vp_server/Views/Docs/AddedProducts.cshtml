@@ -2,7 +2,8 @@
 @model List<ProductExcelDTO>
 @{
     ViewBag.NamePage = "Проверка продукции перед добавлением";
-   //Layout = "/Views/Shared/_Layout.cshtml";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    
 }
 
 <!DOCTYPE html>
@@ -39,6 +40,7 @@
                                     <td>@item.Strength</td>
                                     <td>@item.Manufacturer</td>
                                     <td>@item.Count</td>
+                                    <td></td>
                                 </tr>
                             }
                         </tbody>

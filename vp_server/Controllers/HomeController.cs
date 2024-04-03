@@ -295,7 +295,7 @@ namespace vp_server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct(Product product, IFormFile PhotoFile, int? quantity)
+        public async Task<IActionResult> CreateProduct(Product product, IFormFile? PhotoFile, int? quantity)
         {
             byte[] imageData = null;
             //Считать переданный файл в массив байтов
