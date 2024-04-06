@@ -76,8 +76,7 @@ namespace vp_server.Controllers
                     ExcelGenerate validate = new ExcelGenerate();
                     if (validate.columnValidate(worksheet))
                     {
-                        IEnumerable<ProductExcelDTO> excelCollection = worksheet.FromSheetToModel<ProductExcelDTO>();
-                        TempData["list"] = JsonSerializer.Serialize(excelCollection);
+                        IEnumerable<ProductExcelDTO> excelCollection = worksheet.FromSheetToModel<ProductExcelDTO>();                       
                         using (VapeshopContext db = new VapeshopContext())
                         {                          
                             foreach (var i in excelCollection)
@@ -96,7 +95,7 @@ namespace vp_server.Controllers
                                             Title = i.Nicotine
                                         };
                                         db.NicotineTypes.Add(nicotineType);
-                                        db.SaveChangesAsync();
+                                        await db.SaveChangesAsync();
                                         product.NicotineTypeId = nicotineType.Id;
                                     }
                                     if (db.Manufacturers.Any(m => m.Title.ToLower() == i.Manufacturer.ToLower()))
@@ -110,7 +109,7 @@ namespace vp_server.Controllers
                                             Title = i.Manufacturer
                                         };
                                         db.Manufacturers.Add(manufacturer);
-                                        db.SaveChangesAsync();
+                                        await db.SaveChangesAsync();
                                         product.ManufacturerId = manufacturer.Id;
                                     }
                                     if (db.Strenghts.Any(s=>s.Title.ToLower() == i.Strength.ToLower()))
@@ -124,7 +123,7 @@ namespace vp_server.Controllers
                                             Title = i.Strength
                                         };
                                         db.Strenghts.Add(strenght);
-                                        db.SaveChangesAsync();
+                                        await db.SaveChangesAsync();
                                         product.StrengthId= strenght.Id;
                                     }
                                     //Чтото возможно не так.Нужно придумать решение, если невозможные для null поля будут все же равны null
@@ -152,7 +151,7 @@ namespace vp_server.Controllers
                                 }                               
                             }
                         }
-                        return RedirectToAction("AddedProducts", "Docs");                  
+                        return RedirectToAction("Index", "Home");                  
                     }
                     else
                     {
