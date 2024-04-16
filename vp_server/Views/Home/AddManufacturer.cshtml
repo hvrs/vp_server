@@ -4,23 +4,39 @@
     ViewBag.NamePage = "Добавление производителя";
     Layout = "/Views/Shared/_Layout.cshtml";
 }
-<div class="main">
-    <div class="container">
-        <div class="marga">
-            @using (Html.BeginForm("CreateManufacturer", "Home", FormMethod.Post))
-            {
-                <p>
-                    <label class="form-label">Название производителя:</label>
-                    <input type="text" asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" />
-                </p>
-                <p>
-                    <input type="submit" class="btn btn-primary" value="Записать" />
-                </p>
-            }
+<!DOCTYPE html>
+<html>
+    <body>
+    <div class="main">
+        <div class="container">
+            <div class="marga">
+                <div class="row">
+                    @using (Html.BeginForm("CreateManufacturer", "Home", FormMethod.Post))
+                    {
+                        <p>
+                            <label class="form-label">Название производителя:</label>
+                            <input type="text" asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" />
+                        </p>
+                        <p>
+                            <input type="submit" class="btn btn-primary" value="Записать" />
+                        </p>
+                    }
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="nameCategory" class="form-label">Название категории:</label>
+                        <input type="text" id="nameCategory" class="form-control" />
+                    </div>
+                    <div class="col">
+                        @Html.DropDownList("parentCategory", ViewBag.categories as SelectList, null, new {@class = "form-control", @id = "parentCategoryList"})
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+    </body>
+</html>
 <script src="~/js/jquery.validate.min.js"></script>
 <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
 <link href="~/css/homeStyle.css" rel="stylesheet"/>

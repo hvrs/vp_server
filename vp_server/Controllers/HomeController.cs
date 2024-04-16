@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using vp_server.Models;
 using vp_server.Models.ViewModels;
@@ -88,7 +89,14 @@ namespace vp_server.Controllers
 
         public IActionResult AddManufacturer()
         {
-            return View();
+            using (VapeshopContext db = new VapeshopContext())
+            {
+                /*List<Category> categori = db.Categories
+                categori.Insert(0, new Category { CategoryName="Главная", Id = 0});
+                ViewBag.categories = new Microsoft.AspNetCore.Mvc.Rendering.SelectList()*/
+                return View();
+            }
+            
         }       
 
         public IActionResult AddProduct()

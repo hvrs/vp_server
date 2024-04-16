@@ -27,8 +27,7 @@
                                 <input type="submit" class="btn btn-primary" value="Отправить файл" id="btnSendExcel" disabled="disabled"/>
                             </p>
                         }
-
-                                            
+                            <input type="submit" class="btn btn-primary" value="Получить форму заполнения" id="btnGetExcelForm"/>
                         </div>                                          
                     </div>                                 
                 </div>
@@ -51,6 +50,11 @@
 
             });
 
+            });
+            $(document).ready(function () {
+                $("#btnGetExcelForm").click(function () {
+                window.location = '/Docs/getExcelForm';
+                });
             });
 
             document.getElementById('uploadExcel').addEventListener('change', function () {

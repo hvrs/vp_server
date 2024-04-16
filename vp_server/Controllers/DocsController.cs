@@ -8,6 +8,13 @@ using System.IO;
 using OfficeOpenXml;
 using System.Text.Json;
 
+using ZXing;
+using ZXing.Common;
+using ZXing.QrCode;
+using System.Drawing;
+using ZXing.QrCode.Internal;
+
+
 namespace vp_server.Controllers
 {
     public class DocsController : Controller
@@ -54,11 +61,6 @@ namespace vp_server.Controllers
                 };
                 return View(PTS);
             }
-        }
-        public IActionResult AddedProducts()
-        {
-            var list = JsonSerializer.Deserialize<List<ProductExcelDTO>>(TempData["list"].ToString());
-            return View(list);
         }
 
         #region HTTP
@@ -175,7 +177,7 @@ namespace vp_server.Controllers
                 if (trns != null)
                 {
                     trns.TransactionStatusId = 2;
-                    db.SaveChanges();
+                    await db.SaveChangesAsync();
                     return Json(trns.TransactionStatus.Title);
                 }
                 return BadRequest();
@@ -233,7 +235,7 @@ namespace vp_server.Controllers
         {
             using (VapeshopContext db = new VapeshopContext())
             {
-                byte[]? Excel = db.ExcelDocuments.Where(i => i.Id == id).Select(i => i.DocExcel).FirstOrDefault();
+                byte[]? Excel = await db.ExcelDocuments.Where(i => i.Id == id).Select(i => i.DocExcel).FirstOrDefaultAsync();
                 if (Excel != null)
                 {
                     return File(Excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Отчет.xlsx");
@@ -241,6 +243,38 @@ namespace vp_server.Controllers
                 return BadRequest();
             }
         }
+        
+        public IActionResult getExcelForm()
+        {
+            byte[] excel = System.IO.File.ReadAllBytes(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Utils\\Форма.xlsx")));
+            return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Форма заполения.xlsx");
+        }
+        
+        public IActionResult QRpayment(string sum)//Поместить в HttpGet запрос
+        {
+            string paymenMessage = "ST00012|Name=Табачные изделия" +
+                "|PersonalAcc=40817810100406047330|BankName=Филиал № 5440 Банка ВТБ (публичное акционерное общество) в г. Новосибирске" +
+                "|BIC=045004719|CorrespAcc=30101810450040000719" +
+                "|PayeeINN=7702070139|KPP=540143001" +
+                $"|Sum={sum}.00|Purpose=Тестовая проверка QR|Contract=1111";
+
+            QrCodeEncodingOptions options = new()
+            {
+                DisableECI = true,
+                CharacterSet = "utf-8",
+                Width = 400,
+                Height = 400
+            };
+
+            var writer = new ZXing.Windows.Compatibility.BarcodeWriter();
+            writer.Format = BarcodeFormat.QR_CODE;
+            writer.Options = options;
+            var QRcode = writer.Write(paymenMessage);
+
+           ImageConverter converter = new ImageConverter();
+           return View((byte[])converter.ConvertTo(QRcode, typeof(byte[])));
+        }
+        
     }
 }
 
