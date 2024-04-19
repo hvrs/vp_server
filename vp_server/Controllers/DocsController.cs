@@ -252,27 +252,38 @@ namespace vp_server.Controllers
         
         public IActionResult QRpayment(string sum)//Поместить в HttpGet запрос
         {
-            string paymenMessage = "ST00012|Name=Табачные изделия" +
-                "|PersonalAcc=40817810100406047330|BankName=Филиал № 5440 Банка ВТБ (публичное акционерное общество) в г. Новосибирске" +
-                "|BIC=045004719|CorrespAcc=30101810450040000719" +
-                "|PayeeINN=7702070139|KPP=540143001" +
-                $"|Sum={sum}.00|Purpose=Тестовая проверка QR|Contract=1111";
-
-            QrCodeEncodingOptions options = new()
+            using (VapeshopContext db = new VapeshopContext())
             {
-                DisableECI = true,
-                CharacterSet = "utf-8",
-                Width = 400,
-                Height = 400
-            };
+                PaymentDetail paymentDetail = db.PaymentDetails.FirstOrDefault();
+                if (paymentDetail != null)
+                {
+                    string paymenMessage = $"ST00012|Name={paymentDetail.FirmName}" +
+                    $"|PersonalAcc={paymentDetail.PersonalRs}|BankName={paymentDetail.BankName}" +
+                    $"|BIC={paymentDetail.Bik}|CorrespAcc={paymentDetail.BankKs}" +
+                    $"|PayeeINN={paymentDetail.BankInn}|KPP={paymentDetail.BankKpp}" +
+                    $"|Sum={sum}.00|Purpose=Тестовая проверка QR|Contract=1111";
 
-            var writer = new ZXing.Windows.Compatibility.BarcodeWriter();
-            writer.Format = BarcodeFormat.QR_CODE;
-            writer.Options = options;
-            var QRcode = writer.Write(paymenMessage);
+                    QrCodeEncodingOptions options = new()
+                    {
+                        DisableECI = true,
+                        CharacterSet = "utf-8",
+                        Width = 400,
+                        Height = 400
+                    };
 
-           ImageConverter converter = new ImageConverter();
-           return View((byte[])converter.ConvertTo(QRcode, typeof(byte[])));
+                    var writer = new ZXing.Windows.Compatibility.BarcodeWriter();
+                    writer.Format = BarcodeFormat.QR_CODE;
+                    writer.Options = options;
+                    var QRcode = writer.Write(paymenMessage);
+
+                    ImageConverter converter = new ImageConverter();
+                    return View((byte[])converter.ConvertTo(QRcode, typeof(byte[])));
+
+                }
+                else
+                    return RedirectToAction("ExcelDocCreate");
+            }
+                           
         }
         
     }

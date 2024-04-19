@@ -23,6 +23,8 @@ public partial class VapeshopContext : DbContext
 
     public virtual DbSet<NicotineType> NicotineTypes { get; set; }
 
+    public virtual DbSet<PaymentDetail> PaymentDetails { get; set; }
+
     public virtual DbSet<Product> Products { get; set; }
 
     public virtual DbSet<ProductCount> ProductCounts { get; set; }
@@ -79,6 +81,28 @@ public partial class VapeshopContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Title).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<PaymentDetail>(entity =>
+        {
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.BankInn)
+                .HasMaxLength(50)
+                .HasColumnName("BankINN");
+            entity.Property(e => e.BankKpp)
+                .HasMaxLength(50)
+                .HasColumnName("BankKPP");
+            entity.Property(e => e.BankKs)
+                .HasMaxLength(50)
+                .HasColumnName("BankKS");
+            entity.Property(e => e.BankName).HasMaxLength(50);
+            entity.Property(e => e.Bik)
+                .HasMaxLength(50)
+                .HasColumnName("BIK");
+            entity.Property(e => e.FirmName).HasMaxLength(100);
+            entity.Property(e => e.PersonalRs)
+                .HasMaxLength(50)
+                .HasColumnName("PersonalRS");
         });
 
         modelBuilder.Entity<Product>(entity =>

@@ -91,10 +91,12 @@ namespace vp_server.Controllers
         {
             using (VapeshopContext db = new VapeshopContext())
             {
-                /*List<Category> categori = db.Categories
-                categori.Insert(0, new Category { CategoryName="Главная", Id = 0});
-                ViewBag.categories = new Microsoft.AspNetCore.Mvc.Rendering.SelectList()*/
-                return View();
+                PaymentManufacturer PM = new PaymentManufacturer
+                {
+                    PaymentDetail = db.PaymentDetails.FirstOrDefault()
+
+                };
+                return View(PM);
             }
             
         }       
@@ -284,6 +286,39 @@ namespace vp_server.Controllers
                 }
             }
             return Content(errorMessages);*/
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePayment(PaymentDetail paymentDetail)
+        {
+            using (VapeshopContext db = new VapeshopContext())
+            {
+                if (paymentDetail.Id == 0)
+                {
+                    db.PaymentDetails.Add(paymentDetail);
+                    await db.SaveChangesAsync();
+                    return RedirectToAction("AddManufacturer");
+                }
+                else
+                {
+                    PaymentDetail _paymentDetail = await db.PaymentDetails.Where(pd => pd.Id == paymentDetail.Id).FirstOrDefaultAsync();
+                    if (_paymentDetail != null)
+                    {
+                        _paymentDetail.BankName = paymentDetail.BankName;
+                        _paymentDetail.BankInn = paymentDetail.BankInn;
+                        _paymentDetail.BankKpp = paymentDetail.BankKpp;
+                        _paymentDetail.BankKs = paymentDetail.BankKs;
+                        _paymentDetail.Bik = paymentDetail.Bik;
+                        _paymentDetail.PersonalRs = paymentDetail.PersonalRs;
+                        _paymentDetail.FirmName = paymentDetail.FirmName;
+                        await db.SaveChangesAsync();
+                        return RedirectToAction("AddManufacturer");
+                    }
+                    return RedirectToAction("AddManufacturer");
+                }
+
+            }
+            
         }
 
 
