@@ -13,7 +13,7 @@ public partial class Product
     public string Title { get; set; } = null!;
 
     [Required(ErrorMessage = "Не указана стоимость")]
-    [RegularExpression(@"^[0-9]+$", ErrorMessage = "Введено не числовое значение")]
+    //[RegularExpression(@"^[0-9]+$", ErrorMessage = "Введено не числовое значение")]
     public double Cost { get; set; }
     [Required(ErrorMessage ="Не указан материал")]
     public string Material { get; set; } = null!;
