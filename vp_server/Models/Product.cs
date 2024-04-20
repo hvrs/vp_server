@@ -15,7 +15,7 @@ public partial class Product
     [Required(ErrorMessage = "Не указана стоимость")]
     [RegularExpression(@"^[0-9]+$", ErrorMessage = "Введено не числовое значение")]
     public double Cost { get; set; }
-
+    [Required(ErrorMessage ="Не указан материал")]
     public string Material { get; set; } = null!;
 
     public byte[]? Image { get; set; }

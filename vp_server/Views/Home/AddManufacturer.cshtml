@@ -34,27 +34,27 @@
                         </p>
                         <p>
                             <label for="inp_BankINN" class="form-label">ИНН банка</label>
-                            <input type="text" asp-for="PaymentDetail.BankInn" value="@Model.PaymentDetail.BankInn" class="form-control" id="inp_BankINN" />
+                            <input type="number" asp-for="PaymentDetail.BankInn" value="@Model.PaymentDetail.BankInn" class="form-control" id="inp_BankINN" />
                             <span asp-validation-for="PaymentDetail.BankInn"/>
                         </p>
                         <p>
                             <label for="inp_BankKPP" class="form-label">КПП банка</label>
-                            <input type="text" asp-for="PaymentDetail.BankKpp" value="@Model.PaymentDetail.BankKpp" class="form-control" id="inp_BankKPP" />
+                            <input type="number" asp-for="PaymentDetail.BankKpp" value="@Model.PaymentDetail.BankKpp" class="form-control" id="inp_BankKPP" />
                             <span asp-validation-for="PaymentDetail.BankKpp"/>
                         </p>
                         <p>
                             <label for="inp_BankKS" class="form-label">К/С банка</label>
-                            <input type="text" asp-for="PaymentDetail.BankKs" value="@Model.PaymentDetail.BankKs" class="form-control" id="inp_BankKS" />
+                            <input type="number" asp-for="PaymentDetail.BankKs" value="@Model.PaymentDetail.BankKs" class="form-control" id="inp_BankKS" />
                             <span asp-validation-for="PaymentDetail.BankKs"/>
                         </p>
                         <p>
                             <label for="inp_BIK" class="form-label">БИК</label>
-                            <input type="text" asp-for="PaymentDetail.Bik" value="@Model.PaymentDetail.Bik" class="form-control" id="inp_BIK" />
+                            <input type="number" asp-for="PaymentDetail.Bik" value="@Model.PaymentDetail.Bik" class="form-control" id="inp_BIK" />
                             <span asp-validation-for="PaymentDetail.Bik"/>
                         </p>
                         <p>
                             <label for="inp_RS" class="form-label">Персональный расчетный счет</label>
-                            <input type="text" asp-for="PaymentDetail.PersonalRs" value="@Model.PaymentDetail.PersonalRs" class="form-control" id="inp_RS" />
+                            <input type="number" asp-for="PaymentDetail.PersonalRs" value="@Model.PaymentDetail.PersonalRs" class="form-control" id="inp_RS" />
                             <span asp-validation-for="PaymentDetail.PersonalRs"/>
                         </p>
                         <p>
