@@ -11,6 +11,8 @@ public partial class Category
 
     public int? ParentCategoryId { get; set; }
 
+    public int? CategoryLevel { get; set; }
+
     public virtual ICollection<Category> InverseParentCategory { get; set; } = new List<Category>();
 
     public virtual Category? ParentCategory { get; set; }

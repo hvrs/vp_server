@@ -95,11 +95,11 @@ public partial class VapeshopContext : DbContext
             entity.Property(e => e.BankKs)
                 .HasMaxLength(50)
                 .HasColumnName("BankKS");
-            entity.Property(e => e.BankName).HasMaxLength(50);
+            entity.Property(e => e.BankName).HasMaxLength(150);
             entity.Property(e => e.Bik)
                 .HasMaxLength(50)
                 .HasColumnName("BIK");
-            entity.Property(e => e.FirmName).HasMaxLength(100);
+            entity.Property(e => e.FirmName).HasMaxLength(150);
             entity.Property(e => e.PersonalRs)
                 .HasMaxLength(50)
                 .HasColumnName("PersonalRS");

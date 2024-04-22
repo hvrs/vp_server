@@ -1,0 +1,65 @@
+﻿
+@{
+    ViewBag.NamePage = "Редактирование категорий";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+    <body>
+        <div class="container">
+            <div class="marga">
+                <div class="row">
+                <h2>Добавление категорий</h2>
+                    <div class="col-4">
+                    <label for="inp_nameCat" class="form-label">Название категории</label>
+                    <input class="form-control" id="inp_nameCat" />
+                    </div>
+                    <div class="col-2">
+                        <label class="form-label">Уровень категории</label>
+                        @Html.DropDownList("level",new SelectList(new string[] {"1","2","3"}),null, new {@class = "form-control", @id = "drp_lvl"})
+                    </div>
+                    <div class="col-4">
+                        <label class="form-label">Родительская категория</label>
+                    @Html.DropDownList("parentCategory", Enumerable.Empty<SelectListItem>(), null, new { @class = "form-control", @id = "drp_parent" })
+                </div>                                        
+                </div>
+                <div class="row">
+
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                lvl = document.getElementById('drp_lvl').value;
+                $("#drp_lvl").change(function (val) {
+                    lvl = document.getElementById('drp_lvl').value;
+                    
+                    $.ajax({
+                        url: '@Url.Action("GetParentCategory", "Home")',
+                        type: 'POST',
+                        data: { "level": lvl },
+                        dataType: "json",
+                        success: function (request) {
+                            document.getElementById('drp_parent').length = 0;
+                                                   
+                            var select = document.getElementById('drp_parent');
+
+                        $(request).each(function (index, viw) {
+                            var option = document.createElement("option");
+                            option.value = viw.id;
+                            option.innerHTML = viw.title;
+                            select.appendChild(option);
+                        });
+                        },
+                        error: function (err) {
+                            alert("Свэг");
+                        }
+                    });
+
+                });
+            });    
+        </script>
+    </body>
+</html>
+<link href="~/css/homeStyle.css" rel="stylesheet" />
