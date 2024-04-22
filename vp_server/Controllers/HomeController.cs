@@ -418,41 +418,25 @@ namespace vp_server.Controllers
             return BadRequest();
         }
 
-        #endregion 
-        public IActionResult etParentCategory(int level)
+        [HttpPost]
+        public async Task<IActionResult> CreateCategory(int level, int? parentCategory, string nameCategory)
         {
-            if (level != 0)
+            using (VapeshopContext db = new VapeshopContext())
             {
-                using (VapeshopContext db = new VapeshopContext())
+                Category category = new Category
                 {
-                    List<CategoriesDTO> catDTO = new List<CategoriesDTO>();
-                    if (level == 2)
-                    {
-                        var categories = from f in db.Categories.Where(c => c.CategoryLevel == 1)
-                                         select new CategoriesDTO()
-                                         {
-                                             Id = f.Id,
-                                             Title = f.CategoryName
-                                         };
-                        catDTO = categories.ToList();
-
-                    }
-                    if (level == 3)
-                    {
-                        var categories = from f in db.Categories.Where(c => c.CategoryLevel == 2)
-                                         select new CategoriesDTO()
-                                         {
-                                             Id = f.Id,
-                                             Title = f.CategoryName
-                                         };
-                        catDTO = categories.ToList();
-                    }
-                    return Json(catDTO);
-                }
+                    CategoryName = nameCategory,
+                    CategoryLevel = level,
+                    ParentCategoryId = parentCategory
+                };
+                db.Categories.Add(category);
+                await db.SaveChangesAsync();
             }
-            return BadRequest();
+
+            return RedirectToAction("UpdateCategory");
         }
 
+        #endregion 
     }
 }
 //Scaffold-DbContext "Data Source=(local);Initial Catalog=vapeshop;Integrated Security=True;Encrypt=False" Microsoft.EntityFrameworkCore.SqlServer
