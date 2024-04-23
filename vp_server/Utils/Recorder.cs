@@ -56,6 +56,16 @@ namespace vp_server.Utils
                              };
             return categories.ToList();
         }
+        public List<CategoriesDTO> getAllCategories()
+        {
+            var categories = from c in dba.Categories
+                             select new CategoriesDTO()
+                             {
+                                 Id = c.Id,
+                                 Title = c.CategoryName
+                             };
+            return categories.ToList();
+        }
 
     }
 }

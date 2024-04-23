@@ -1,4 +1,5 @@
-﻿
+﻿@using vp_server.Models
+@model Category
 @{
     ViewBag.NamePage = "Редактирование категорий";
     Layout = "/Views/Shared/_Layout.cshtml";
@@ -14,27 +15,41 @@
 
                 @using (Html.BeginForm("CreateCategory", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
                 {
-                    
-                    <div class="col-4">
+                    <p>
                         <label for="inp_nameCat" class="form-label">Название категории</label>
-                        <input class="form-control" name="nameCategory" id="inp_nameCat" />
-                    </div>
-                    <div class="col-2">
+                        <input type="text" asp-for="CategoryName" class="form-control" id="inp_nameCat" /> <span asp-validation-for="CategoryName" />
+                    </p>
+                    <p>
                         <label class="form-label">Уровень категории</label>
-                        @Html.DropDownList("level", new SelectList(new string[] { "1", "2", "3" }), null, new { @class = "form-control", @id = "drp_lvl" })
-                    </div>
-                    <div class="col-4">
+                        @Html.DropDownListFor(c => c.CategoryLevel, new SelectList(new string[] { "1", "2", "3" }), null, new { @class = "form-control", @id = "drp_lvl" })
+                    </p>
+                    <p>
                         <label class="form-label">Родительская категория</label>
-                        @Html.DropDownList("parentCategory", Enumerable.Empty<SelectListItem>(), null, new { @class = "form-control", @id = "drp_parent" })
-                        <input type="submit" id="btn_addCategory" class="btn btn-info" />
-                    </div>
-                    
-
+                        @Html.DropDownListFor(c => c.ParentCategoryId, Enumerable.Empty<SelectListItem>(), null, new { @class = "form-control", @id = "drp_parent" })
+                    </p>
+                    <p>
+                        <input type="submit" id="btn_addCategory" class="btn btn-info" disabled="disabled" />
+                    </p>                                        
                 }   
                 </div>
                 <div class="row">
-
-                </div>
+                    <h2>Редактирование категорий</h2>
+                @using (Html.BeginForm("RenameCategory", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    <p>
+                        <label>Выбор категории</label>
+                        @Html.DropDownList("Id", ViewBag.catg as SelectList, null, new { @class = "form-control", @id = "drp_categs" })
+                    </p>
+                    <p>
+                        <label>Новое название</label>
+                        <input type="text" name="Title" class="form-control" id="inp_newName"/>
+                    </p>
+                    <p>
+                        <input type="submit" id="btn_update" class="btn btn-info" disabled="disabled"/>
+                    </p>
+                    
+                }
+            </div>
             </div>
         </div>
 @* 
@@ -42,9 +57,32 @@
     $('#btn_addCategory').prop('disabled', false);
     } else {
     $('#btn_addCategory').prop('disabled', true);
-    } *@
+    } *@   
 
         <script type="text/javascript">
+
+            const lbl = document.getElementById('inp_nameCat');
+            lbl.addEventListener('input', validate);
+
+            const lblUpdate = document.getElementById('inp_newName');
+            lblUpdate.addEventListener('input', validatee)
+         function validatee() {
+                if (lblUpdate.value.length) {
+                    $('#btn_update').prop('disabled', false);
+                } else {
+                $('#btn_update').prop('disabled', true);
+                }
+         }
+
+
+            function validate(){
+                if (lbl.value.length) {
+                    $('#btn_addCategory').prop('disabled', false);
+                } else {
+                    $('#btn_addCategory').prop('disabled', true);
+                }
+            }
+           
             $(document).ready(function () {
                 lvl = document.getElementById('drp_lvl').value;
                 $("#drp_lvl").change(function (val) {
@@ -68,7 +106,7 @@
                         });
                         },
                         error: function (err) {
-                            alert("Свэг");
+                            alert("Ошибка");
                         }
                     });
 

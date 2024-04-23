@@ -103,7 +103,7 @@ namespace vp_server.Controllers
         
         public IActionResult UpdateCategory()
         {
-
+            ViewBag.catg = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(recorder.getAllCategories(), "Id", "Title");
             return View();
         }
 
@@ -327,7 +327,6 @@ namespace vp_server.Controllers
             
         }
 
-
         [HttpPost]
         public async Task<IActionResult> CreateManufacturer(Manufacturer manufacturer)
         {
@@ -419,21 +418,29 @@ namespace vp_server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCategory(int level, int? parentCategory, string nameCategory)
+        public async Task<IActionResult> CreateCategory(Category category)
         {
             using (VapeshopContext db = new VapeshopContext())
-            {
-                Category category = new Category
-                {
-                    CategoryName = nameCategory,
-                    CategoryLevel = level,
-                    ParentCategoryId = parentCategory
-                };
+            {              
                 db.Categories.Add(category);
                 await db.SaveChangesAsync();
             }
-
             return RedirectToAction("UpdateCategory");
+        }
+        [HttpPost]
+        public async Task<IActionResult> RenameCategory(int Id, string Title)
+        {
+            using (VapeshopContext db = new VapeshopContext())
+            {
+                Category category = await db.Categories.Where(c => c.Id == Id).FirstOrDefaultAsync();
+                if (category !=null)
+                {
+                    category.CategoryName = Title;
+                    await db.SaveChangesAsync();
+                    
+                }
+                return RedirectToAction("UpdateCategory");
+            }
         }
 
         #endregion 
