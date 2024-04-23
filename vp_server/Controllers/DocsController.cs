@@ -82,75 +82,76 @@ namespace vp_server.Controllers
                         using (VapeshopContext db = new VapeshopContext())
                         {                          
                             foreach (var i in excelCollection)
-                            {                                
-                                if (db.Categories.Any(c=>c.CategoryName.ToLower() == i.Category.ToLower()))//Проверка на то, что категория товара, переданного из Excel есть в БД
-                                {                                   
-                                    Product product = new Product();//Проверка на null!!!
-                                    if (db.NicotineTypes.Any(nt => nt.Title.ToLower() == i.Nicotine.ToLower()))
+                            {
+                                
+                                    if (i.Category is not null && i.Title is not null && i.Cost != 0 && db.Categories.Any(c => c.CategoryName.ToLower() == i.Category.ToLower()))//Проверка на то, что категория товара, переданного из Excel есть в БД
                                     {
-                                        product.NicotineTypeId = db.NicotineTypes.Where(nt => nt.Title.ToLower() == i.Nicotine.ToLower()).FirstOrDefault().Id;
-                                    }
-                                    else if (i.Nicotine != null)
-                                    {
-                                        NicotineType nicotineType = new NicotineType
+                                        Product product = new Product();//Проверка на null!!!
+                                        if (db.NicotineTypes.Any(nt => nt.Title.ToLower() == i.Nicotine.ToLower()))
                                         {
-                                            Title = i.Nicotine
-                                        };
-                                        db.NicotineTypes.Add(nicotineType);
-                                        await db.SaveChangesAsync();
-                                        product.NicotineTypeId = nicotineType.Id;
-                                    }
-                                    if (db.Manufacturers.Any(m => m.Title.ToLower() == i.Manufacturer.ToLower()))
-                                    {
-                                        product.ManufacturerId = db.Manufacturers.Where(m => m.Title.ToLower() == i.Manufacturer.ToLower()).FirstOrDefault().Id;
-                                    }
-                                    else if (i.Manufacturer != null)
-                                    {
-                                        Manufacturer manufacturer = new Manufacturer
+                                            product.NicotineTypeId = db.NicotineTypes.Where(nt => nt.Title.ToLower() == i.Nicotine.ToLower()).FirstOrDefault().Id;
+                                        }
+                                        else if (i.Nicotine != null)
                                         {
-                                            Title = i.Manufacturer
-                                        };
-                                        db.Manufacturers.Add(manufacturer);
-                                        await db.SaveChangesAsync();
-                                        product.ManufacturerId = manufacturer.Id;
-                                    }
-                                    if (db.Strenghts.Any(s=>s.Title.ToLower() == i.Strength.ToLower()))
-                                    {
-                                        product.StrengthId = db.Strenghts.Where(s => s.Title.ToLower() == i.Strength.ToLower()).FirstOrDefault().Id;
-                                    }
-                                    else if(i.Strength != null)
-                                    {
-                                        Strenght strenght = new Strenght
+                                            NicotineType nicotineType = new NicotineType
+                                            {
+                                                Title = i.Nicotine
+                                            };
+                                            db.NicotineTypes.Add(nicotineType);
+                                            await db.SaveChangesAsync();
+                                            product.NicotineTypeId = nicotineType.Id;
+                                        }
+                                        if (db.Manufacturers.Any(m => m.Title.ToLower() == i.Manufacturer.ToLower()))
                                         {
-                                            Title = i.Strength
-                                        };
-                                        db.Strenghts.Add(strenght);
-                                        await db.SaveChangesAsync();
-                                        product.StrengthId= strenght.Id;
-                                    }
-                                    //Чтото возможно не так.Нужно придумать решение, если невозможные для null поля будут все же равны null
-                                    product.CategoryId = db.Categories.Where(c => c.CategoryName.ToLower() == i.Category.ToLower()).FirstOrDefault().Id;
-                                    if (product.ManufacturerId !=null)
-                                    {
-                                        product.Title = i.Title;
-                                        product.Cost = i.Cost;
-                                        product.Material = i.Material;
-                                        product.Taste = i.Taste;                                         
-                                        product.Image = System.IO.File.ReadAllBytes(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Utils\\stub.jpg")));
+                                            product.ManufacturerId = db.Manufacturers.Where(m => m.Title.ToLower() == i.Manufacturer.ToLower()).FirstOrDefault().Id;
+                                        }
+                                        else if (i.Manufacturer != null)
+                                        {
+                                            Manufacturer manufacturer = new Manufacturer
+                                            {
+                                                Title = i.Manufacturer
+                                            };
+                                            db.Manufacturers.Add(manufacturer);
+                                            await db.SaveChangesAsync();
+                                            product.ManufacturerId = manufacturer.Id;
+                                        }
+                                        if (db.Strenghts.Any(s => s.Title.ToLower() == i.Strength.ToLower()))
+                                        {
+                                            product.StrengthId = db.Strenghts.Where(s => s.Title.ToLower() == i.Strength.ToLower()).FirstOrDefault().Id;
+                                        }
+                                        else if (i.Strength != null)
+                                        {
+                                            Strenght strenght = new Strenght
+                                            {
+                                                Title = i.Strength
+                                            };
+                                            db.Strenghts.Add(strenght);
+                                            await db.SaveChangesAsync();
+                                            product.StrengthId = strenght.Id;
+                                        }
+                                        //Чтото возможно не так.Нужно придумать решение, если невозможные для null поля будут все же равны null
+                                        product.CategoryId = db.Categories.Where(c => c.CategoryName.ToLower() == i.Category.ToLower()).FirstOrDefault().Id;
+                                        if (product.ManufacturerId != null)
+                                        {
+                                            product.Title = i.Title;
+                                            product.Cost = i.Cost;
+                                            product.Material = i.Material;
+                                            product.Taste = i.Taste;
+                                            product.Image = System.IO.File.ReadAllBytes(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Utils\\stub.jpg")));
 
-                                        db.Products.Add(product);
-                                        await db.SaveChangesAsync();
+                                            db.Products.Add(product);
+                                            await db.SaveChangesAsync();
 
-                                        ProductCount PC = new ProductCount();
-                                        PC.ProductId = product.Id;
-                                        if (i.Count >= 0)
-                                            PC.Count = i.Count;
-                                        else
-                                            PC.Count = 0;
-                                        db.ProductCounts.Add(PC);
-                                        await db.SaveChangesAsync();
-                                    }
-                                }                               
+                                            ProductCount PC = new ProductCount();
+                                            PC.ProductId = product.Id;
+                                            if (i.Count >= 0)
+                                                PC.Count = i.Count;
+                                            else
+                                                PC.Count = 0;
+                                            db.ProductCounts.Add(PC);
+                                            await db.SaveChangesAsync();
+                                        }
+                                    }                               
                             }
                         }
                         return RedirectToAction("Index", "Home");                  
