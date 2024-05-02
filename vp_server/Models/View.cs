@@ -15,3 +15,10 @@ public partial class View
 
     public virtual Product Product { get; set; } = null!;
 }
+
+public class ViewDTO
+{
+    public int ProductId { get; set; }
+    public DateOnly Date { get; set; }
+    public TimeOnly Time { get; set; }
+}

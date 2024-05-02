@@ -10,6 +10,7 @@ namespace vp_server.Models
         public string Manufacturer { get; set; } = "";
         public string? Nicotine { get; set; }
         public string? Strength { get; set; }
+        public double Cost { get; set; }
     }
     public class ProductExcelDTO
     {

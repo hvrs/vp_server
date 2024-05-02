@@ -25,7 +25,8 @@ namespace vp_server.API
                                  Category = pc.Product.Category.CategoryName,
                                  Manufacturer = pc.Product.Manufacturer.Title,
                                  Nicotine = pc.Product.NicotineType.Title,
-                                 Strength = pc.Product.Strength.Title
+                                 Strength = pc.Product.Strength.Title,
+                                 Cost = pc.Product.Cost
                              };
                 return Ok(products);
             }

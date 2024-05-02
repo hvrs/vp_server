@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using vp_server.Models;
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,17 +10,17 @@ namespace vp_server.API
     public class ViewController : ControllerBase
     {
 
-        // POST api/<ViewController>/5
-        [HttpPost("{id}")]
-        public async void Post(int id, DateOnly date, TimeOnly time)
+        // POST api/<ViewController>
+        [HttpPost]
+        public async void Post([FromBody] ViewDTO viewD)
         {
-            using(VapeshopContext db = new VapeshopContext())
+            using (VapeshopContext db = new VapeshopContext())
             {
                 View view = new View
                 {
-                    Date = date,
-                    Time = time,
-                    ProductId = id
+                    Date = viewD.Date,
+                    Time = viewD.Time,
+                    ProductId = viewD.ProductId
                 };
                 db.Views.Add(view);
                 await db.SaveChangesAsync();
