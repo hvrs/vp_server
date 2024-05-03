@@ -43,4 +43,9 @@ namespace vp_server.Models
             ColumnIndex = column;
         }
     }
+
+    public class ProductToB
+    {
+        public int ProductId { get; set; }
+    }
 }

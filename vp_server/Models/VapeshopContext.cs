@@ -27,6 +27,8 @@ public partial class VapeshopContext : DbContext
 
     public virtual DbSet<Product> Products { get; set; }
 
+    public virtual DbSet<ProductBasket> ProductBaskets { get; set; }
+
     public virtual DbSet<ProductCount> ProductCounts { get; set; }
 
     public virtual DbSet<ReplenishmentProduct> ReplenishmentProducts { get; set; }
@@ -136,6 +138,18 @@ public partial class VapeshopContext : DbContext
                 .HasForeignKey(d => d.StrengthId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Product_Strenght");
+        });
+
+        modelBuilder.Entity<ProductBasket>(entity =>
+        {
+            entity.ToTable("ProductBasket");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.ProductId).HasColumnName("ProductID");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductBaskets)
+                .HasForeignKey(d => d.ProductId)
+                .HasConstraintName("FK_ProductBasket_Product");
         });
 
         modelBuilder.Entity<ProductCount>(entity =>
