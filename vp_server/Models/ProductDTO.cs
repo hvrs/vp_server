@@ -48,4 +48,10 @@ namespace vp_server.Models
     {
         public int ProductId { get; set; }
     }
+
+    public class DTOProductAndQuantity
+    {
+        public ProductDTO? product { get; set; }
+        public int? quantityInBusket { get; set; }
+    }
 }

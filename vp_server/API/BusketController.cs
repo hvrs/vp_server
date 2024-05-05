@@ -10,6 +10,7 @@ namespace vp_server.API
     [ApiController]
     public class BusketController : ControllerBase
     {
+        private VapeshopContext db = new VapeshopContext();
 
         // POST api/<BusketController>
         [HttpPost]
@@ -17,12 +18,52 @@ namespace vp_server.API
         {
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<DTOProductAndQuantity>>> Get()
+        {
+            try
+            {
+                if (await db.ProductBaskets.AnyAsync())
+                {
+                    List<DTOProductAndQuantity> productDtoQuant = new List<DTOProductAndQuantity>();
+                    List<ProductBasket> PB = await db.ProductBaskets.ToListAsync();
+                    foreach (var item in PB)
+                    {
+                        DTOProductAndQuantity productInBucket = new DTOProductAndQuantity();
+                        var prod = from pc in db.Products.Where(p => p.Id == item.ProductId)
+                                             select new ProductDTO
+                                            {
+                                                Id = pc.Id,
+                                                NameProduct = pc.Title,
+                                                Photo = pc.Image,
+                                                Category = pc.Category.CategoryName,
+                                                Manufacturer = pc.Manufacturer.Title,
+                                                Nicotine = pc.NicotineType.Title,
+                                                Strength = pc.Strength.Title,
+                                                Cost = pc.Cost
+                                            };
+                        productInBucket.product = await prod.FirstOrDefaultAsync();
+                        productInBucket.quantityInBusket = item.Quantity;
+                        productDtoQuant.Add(productInBucket);
+                    }
+                    return Ok(productDtoQuant);
+                }
+                else
+                {
+                    return Ok(0);
+                }
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+
         // PUT api/<BusketController>/5
         [HttpPut]
         public async void Put([FromBody] ProductToB product)
         {
-            using (VapeshopContext db = new VapeshopContext())
-            {
                 if (db.ProductBaskets.Any())
                 {
                     if (await db.ProductBaskets.AnyAsync(pb => pb.ProductId == product.ProductId))
@@ -53,7 +94,6 @@ namespace vp_server.API
                     db.ProductBaskets.Add(productBasket);
                     await db.SaveChangesAsync();
                 }
-            }
 
         }
 
@@ -61,10 +101,16 @@ namespace vp_server.API
         [HttpDelete]
         public async void Delete()//https://stackoverflow.com/questions/15220411/entity-framework-delete-all-rows-in-table
         {
-            using (VapeshopContext db = new VapeshopContext())
-            {
-                await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE [ProductBascket]");
-            }
+              await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE [ProductBascket]"); 
+        }
+
+        [HttpDelete("{id}")]
+        public async void Delete(int id)
+        {
+            var productInBasket = new ProductBasket { ProductId = id };
+            db.ProductBaskets.Attach(productInBasket);
+            db.ProductBaskets.Remove(productInBasket);
+            await db.SaveChangesAsync();
         }
 
     }
