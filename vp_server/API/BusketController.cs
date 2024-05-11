@@ -107,9 +107,7 @@ namespace vp_server.API
         [HttpDelete("{id}")]
         public async void Delete(int id)
         {
-            var productInBasket = new ProductBasket { ProductId = id };
-            db.ProductBaskets.Attach(productInBasket);
-            db.ProductBaskets.Remove(productInBasket);
+            db.ProductBaskets.Remove(await db.ProductBaskets.Where(pb => pb.ProductId == id).FirstOrDefaultAsync());
             await db.SaveChangesAsync();
         }
 

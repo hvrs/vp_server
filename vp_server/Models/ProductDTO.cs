@@ -54,4 +54,21 @@ namespace vp_server.Models
         public ProductDTO? product { get; set; }
         public int? quantityInBusket { get; set; }
     }
+
+    public class idProductsInBasketAndSum
+    {
+        public List<ProductAndQuantity> productQ { get; set;}
+        public double Sum { get; set; }
+        public idProductsInBasketAndSum()
+        {
+            productQ = new List<ProductAndQuantity>();
+        }
+    }
+
+    public class ProductAndQuantity
+    {
+        public int ProductID { get; set; }
+        public int Quantity { get; set;}
+    }
+   
 }

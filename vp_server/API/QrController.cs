@@ -4,6 +4,7 @@ using vp_server.Models;
 using ZXing.QrCode;
 using ZXing;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,6 +20,8 @@ namespace vp_server.API
         {
             using (VapeshopContext db = new VapeshopContext())
             {
+
+
                 PaymentDetail paymentDetail = await db.PaymentDetails.FirstOrDefaultAsync();
                 if (paymentDetail != null)
                 {
@@ -48,6 +51,36 @@ namespace vp_server.API
                 else
                     return BadRequest();
             }
-        }       
+        }
+
+        [HttpPut]
+        public async void Put([FromBody] idProductsInBasketAndSum basketAndSum)//Добавление транзакции в базу данныхы
+        {
+            using(VapeshopContext db = new VapeshopContext())
+            {
+                Transaction transaction = new Transaction
+                {
+                    Date = DateOnly.FromDateTime(DateTime.Now),
+                    Time = TimeOnly.FromDateTime(DateTime.Now),
+                    Sum = basketAndSum.Sum,
+                    IsViewed = false,
+                    TransactionStatusId = 1
+                };
+                db.Transactions.Add(transaction);
+                await db.SaveChangesAsync();
+                foreach (var i in basketAndSum.productQ)
+                {
+                    TransactionsAndProduct tP = new TransactionsAndProduct
+                    {
+                        TransactionId = transaction.Id,
+                        ProductId = i.ProductID,
+                        Quantitly = i.Quantity                     
+                    };
+                    db.TransactionsAndProducts.Add(tP);
+                    await db.SaveChangesAsync();
+                }
+
+            }
+        }
     }
 }
