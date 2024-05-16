@@ -5,6 +5,7 @@ using ZXing.QrCode;
 using ZXing;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+using System.Drawing.Imaging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,14 +15,12 @@ namespace vp_server.API
     [ApiController]
     public class QrController : ControllerBase
     {
-        // GET api/<QrController>/5
+        // GET api/<QrController>/5 
         [HttpGet("{sum}")]
-        public async Task <ActionResult<byte[]>> Get(string sum)
+        public async Task <ActionResult<ImageDto>> Get(string sum)
         {
             using (VapeshopContext db = new VapeshopContext())
             {
-
-
                 PaymentDetail paymentDetail = await db.PaymentDetails.FirstOrDefaultAsync();
                 if (paymentDetail != null)
                 {
@@ -37,6 +36,7 @@ namespace vp_server.API
                         CharacterSet = "utf-8",
                         Width = 400,
                         Height = 400
+                              
                     };
 
                     var writer = new ZXing.Windows.Compatibility.BarcodeWriter();
@@ -44,8 +44,14 @@ namespace vp_server.API
                     writer.Options = options;
                     var QRcode = writer.Write(paymenMessage);
 
+                  
                     ImageConverter converter = new ImageConverter();
-                    return Ok((byte[])converter.ConvertTo(QRcode, typeof(byte[])));
+                    ImageDto imageDto = new ImageDto
+                    {
+                        image = (byte[])converter.ConvertTo(QRcode, typeof(byte[]))
+                    };
+                    return Ok(imageDto);
+                    
 
                 }
                 else
@@ -82,5 +88,10 @@ namespace vp_server.API
 
             }
         }
+    }
+
+    public class ImageDto
+    {
+        public byte[]? image { get; set; }
     }
 }
