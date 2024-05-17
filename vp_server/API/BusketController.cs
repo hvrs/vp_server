@@ -14,8 +14,16 @@ namespace vp_server.API
 
         // POST api/<BusketController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async void Post([FromBody] int transactionID)//Отмена покупки пользователем с последующей очисткой корзины
         {
+            Transaction transaction = await db.Transactions.Where(t=>t.Id == transactionID).FirstOrDefaultAsync();
+            if (transaction != null)
+            {
+                transaction.TransactionStatusId = 3;
+                await db.SaveChangesAsync();
+                Delete();
+            }
+           
         }
 
         [HttpGet]
@@ -101,7 +109,7 @@ namespace vp_server.API
         [HttpDelete]
         public async void Delete()//https://stackoverflow.com/questions/15220411/entity-framework-delete-all-rows-in-table
         {
-              await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE [ProductBascket]"); 
+              await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE [ProductBasket]"); 
         }
 
         [HttpDelete("{id}")]

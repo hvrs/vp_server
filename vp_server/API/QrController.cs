@@ -28,7 +28,7 @@ namespace vp_server.API
                     $"|PersonalAcc={paymentDetail.PersonalRs}|BankName={paymentDetail.BankName}" +
                     $"|BIC={paymentDetail.Bik}|CorrespAcc={paymentDetail.BankKs}" +
                     $"|PayeeINN={paymentDetail.BankInn}|KPP={paymentDetail.BankKpp}" +
-                    $"|Sum={sum}.00|Purpose=Тестовая проверка QR|Contract=1111";
+                    $"|Sum={sum}|Purpose=Тестовая проверка QR|Contract=1111";
 
                     QrCodeEncodingOptions options = new()
                     {
@@ -60,7 +60,7 @@ namespace vp_server.API
         }
 
         [HttpPut]
-        public async void Put([FromBody] idProductsInBasketAndSum basketAndSum)//Добавление транзакции в базу данныхы
+        public async Task<ActionResult<int>> Put([FromBody] idProductsInBasketAndSum basketAndSum)//Добавление транзакции в базу данныхы
         {
             using(VapeshopContext db = new VapeshopContext())
             {
@@ -80,12 +80,12 @@ namespace vp_server.API
                     {
                         TransactionId = transaction.Id,
                         ProductId = i.ProductID,
-                        Quantitly = i.Quantity                     
+                        Quantitly = i.Quantity
                     };
                     db.TransactionsAndProducts.Add(tP);
                     await db.SaveChangesAsync();
                 }
-
+                return Ok(transaction.Id);
             }
         }
     }
