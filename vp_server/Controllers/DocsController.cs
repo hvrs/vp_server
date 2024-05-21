@@ -251,41 +251,6 @@ namespace vp_server.Controllers
             return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Форма заполения.xlsx");
         }
         
-        public IActionResult QRpayment(string sum)//Поместить в HttpGet запрос
-        {
-            using (VapeshopContext db = new VapeshopContext())
-            {
-                PaymentDetail paymentDetail = db.PaymentDetails.FirstOrDefault();
-                if (paymentDetail != null)
-                {
-                    string paymenMessage = $"ST00012|Name={paymentDetail.FirmName}" +
-                    $"|PersonalAcc={paymentDetail.PersonalRs}|BankName={paymentDetail.BankName}" +
-                    $"|BIC={paymentDetail.Bik}|CorrespAcc={paymentDetail.BankKs}" +
-                    $"|PayeeINN={paymentDetail.BankInn}|KPP={paymentDetail.BankKpp}" +
-                    $"|Sum={sum}.00|Purpose=Тестовая проверка QR|Contract=1111";
-
-                    QrCodeEncodingOptions options = new()
-                    {
-                        DisableECI = true,
-                        CharacterSet = "utf-8",
-                        Width = 400,
-                        Height = 400
-                    };
-
-                    var writer = new ZXing.Windows.Compatibility.BarcodeWriter();
-                    writer.Format = BarcodeFormat.QR_CODE;
-                    writer.Options = options;
-                    var QRcode = writer.Write(paymenMessage);
-
-                    ImageConverter converter = new ImageConverter();
-                    return View((byte[])converter.ConvertTo(QRcode, typeof(byte[])));
-
-                }
-                else
-                    return RedirectToAction("ExcelDocCreate");
-            }
-                           
-        }
         
     }
 }

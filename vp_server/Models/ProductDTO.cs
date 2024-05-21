@@ -47,12 +47,14 @@ namespace vp_server.Models
     public class ProductToB
     {
         public int ProductId { get; set; }
+        public bool isPlus { get; set; }
     }
 
     public class DTOProductAndQuantity
     {
         public ProductDTO? product { get; set; }
         public int? quantityInBusket { get; set; }
+        public int? quantityInWarehouse { get; set; }//Количество продукции на скалде
     }
 
     public class idProductsInBasketAndSum

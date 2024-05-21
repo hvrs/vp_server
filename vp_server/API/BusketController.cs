@@ -14,14 +14,24 @@ namespace vp_server.API
 
         // POST api/<BusketController>
         [HttpPost]
-        public async void Post([FromBody] int transactionID)//Отмена покупки пользователем с последующей очисткой корзины
+        public async void Post([FromBody] PurchaseStatus status)//Отмена покупки пользователем с последующей очисткой корзины
         {
-            Transaction transaction = await db.Transactions.Where(t=>t.Id == transactionID).FirstOrDefaultAsync();
+            Transaction transaction = await db.Transactions.Where(t=>t.Id == status.transactionID).FirstOrDefaultAsync();
             if (transaction != null)
             {
-                transaction.TransactionStatusId = 3;
-                await db.SaveChangesAsync();
-                Delete();
+                if (!status.isCompleted)
+                {
+                    transaction.TransactionStatusId = 3;//Отменена
+                    await db.SaveChangesAsync();
+                    Delete();
+                }
+                else
+                {
+                    transaction.TransactionStatusId = 2;//Оплачена
+                    await db.SaveChangesAsync();
+                    Delete();
+                }
+                
             }
            
         }
@@ -52,6 +62,7 @@ namespace vp_server.API
                                             };
                         productInBucket.product = await prod.FirstOrDefaultAsync();
                         productInBucket.quantityInBusket = item.Quantity;
+                        productInBucket.quantityInWarehouse = await db.ProductCounts.Where(pc=>pc.ProductId == item.ProductId).Select(pc=>pc.Count).FirstOrDefaultAsync();
                         productDtoQuant.Add(productInBucket);
                     }
                     return Ok(productDtoQuant);
@@ -74,23 +85,33 @@ namespace vp_server.API
         {
                 if (db.ProductBaskets.Any())
                 {
-                    if (await db.ProductBaskets.AnyAsync(pb => pb.ProductId == product.ProductId))
+                    if (product.isPlus)
+                    {
+                        if (await db.ProductBaskets.AnyAsync(pb => pb.ProductId == product.ProductId))
+                        {
+                            ProductBasket pb = await db.ProductBaskets.Where(pb => pb.ProductId == product.ProductId).FirstOrDefaultAsync();
+                            if (pb != null)
+                                pb.Quantity++;
+                            await db.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            ProductBasket productBasket = new ProductBasket
+                            {
+                                ProductId = product.ProductId,
+                                Quantity = 1
+                            };
+                            db.ProductBaskets.Add(productBasket);
+                            await db.SaveChangesAsync();
+                        }
+                    }
+                    else if (!product.isPlus)
                     {
                         ProductBasket pb = await db.ProductBaskets.Where(pb => pb.ProductId == product.ProductId).FirstOrDefaultAsync();
                         if (pb != null)
-                            pb.Quantity++;
+                            pb.Quantity--;
                         await db.SaveChangesAsync();
-                    }
-                    else
-                    {
-                        ProductBasket productBasket = new ProductBasket
-                        {
-                            ProductId = product.ProductId,
-                            Quantity = 1
-                        };
-                        db.ProductBaskets.Add(productBasket);
-                        await db.SaveChangesAsync();
-                    }
+                    }    
                 }
                 else
                 {
@@ -117,8 +138,13 @@ namespace vp_server.API
         {
             db.ProductBaskets.Remove(await db.ProductBaskets.Where(pb => pb.ProductId == id).FirstOrDefaultAsync());
             await db.SaveChangesAsync();
-        }
+        }           
 
+    }
+    public class PurchaseStatus
+    {
+        public int transactionID { get; set; }
+        public bool isCompleted { get; set; }
     }
     
 }
