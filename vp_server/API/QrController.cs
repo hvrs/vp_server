@@ -21,7 +21,7 @@ namespace vp_server.API
         {
             using (VapeshopContext db = new VapeshopContext())
             {
-                PaymentDetail paymentDetail = await db.PaymentDetails.FirstOrDefaultAsync();
+                Models.PaymentDetail paymentDetail = await db.PaymentDetails.FirstOrDefaultAsync();
                 if (paymentDetail != null)
                 {
                     string paymenMessage = $"ST00012|Name={paymentDetail.FirmName}" +
@@ -76,7 +76,7 @@ namespace vp_server.API
                 await db.SaveChangesAsync();
                 foreach (var i in basketAndSum.productQ)
                 {
-                    TransactionsAndProduct tP = new TransactionsAndProduct
+                    Models.TransactionsAndProduct tP = new Models.TransactionsAndProduct
                     {
                         TransactionId = transaction.Id,
                         ProductId = i.ProductID,

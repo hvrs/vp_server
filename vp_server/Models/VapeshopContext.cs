@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
 namespace vp_server.Models;
 
@@ -37,21 +38,29 @@ public partial class VapeshopContext : DbContext
 
     public virtual DbSet<Transaction> Transactions { get; set; }
 
-    public virtual DbSet<TransactionStatus> TransactionStatuses { get; set; }
-
     public virtual DbSet<TransactionsAndProduct> TransactionsAndProducts { get; set; }
+
+    public virtual DbSet<TransactionStatus> TransactionStatuses { get; set; }
 
     public virtual DbSet<View> Views { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=(local);Initial Catalog=vapeshop;Integrated Security=True;Encrypt=False");
+        => optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=Passw0rd;database=vapeshop", ServerVersion.Parse("8.2.0-mysql"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder
+            .UseCollation("utf8mb4_0900_ai_ci")
+            .HasCharSet("utf8mb4");
+
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.ToTable("Category");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("category");
+
+            entity.HasIndex(e => e.ParentCategoryId, "ParentCategoryID");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.CategoryName).HasMaxLength(50);
@@ -59,19 +68,25 @@ public partial class VapeshopContext : DbContext
 
             entity.HasOne(d => d.ParentCategory).WithMany(p => p.InverseParentCategory)
                 .HasForeignKey(d => d.ParentCategoryId)
-                .HasConstraintName("FK_Category_Category");
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("category_ibfk_1");
         });
 
         modelBuilder.Entity<ExcelDocument>(entity =>
         {
-            entity.ToTable("ExcelDocument");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("exceldocument");
 
             entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.DocExcel).HasColumnType("mediumblob");
         });
 
         modelBuilder.Entity<Manufacturer>(entity =>
         {
-            entity.ToTable("Manufacturer");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("manufacturer");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Title).HasMaxLength(100);
@@ -79,7 +94,9 @@ public partial class VapeshopContext : DbContext
 
         modelBuilder.Entity<NicotineType>(entity =>
         {
-            entity.ToTable("NicotineType");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("nicotinetype");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Title).HasMaxLength(50);
@@ -87,6 +104,10 @@ public partial class VapeshopContext : DbContext
 
         modelBuilder.Entity<PaymentDetail>(entity =>
         {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("paymentdetails");
+
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.BankInn)
                 .HasMaxLength(50)
@@ -109,76 +130,100 @@ public partial class VapeshopContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.ToTable("Product");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("product");
+
+            entity.HasIndex(e => e.CategoryId, "CategoryID");
+
+            entity.HasIndex(e => e.ManufacturerId, "ManufacturerID");
+
+            entity.HasIndex(e => e.NicotineTypeId, "NicotineTypeID");
+
+            entity.HasIndex(e => e.StrengthId, "StrengthID");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+            entity.Property(e => e.Image).HasColumnType("mediumblob");
             entity.Property(e => e.ManufacturerId).HasColumnName("ManufacturerID");
             entity.Property(e => e.Material).HasMaxLength(50);
             entity.Property(e => e.NicotineTypeId).HasColumnName("NicotineTypeID");
             entity.Property(e => e.StrengthId).HasColumnName("StrengthID");
             entity.Property(e => e.Taste).HasMaxLength(50);
-            entity.Property(e => e.Title).HasColumnType("text");
+            entity.Property(e => e.Title).HasMaxLength(200);
 
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)
-                .HasConstraintName("FK_Product_Category");
+                .HasConstraintName("product_ibfk_1");
 
             entity.HasOne(d => d.Manufacturer).WithMany(p => p.Products)
                 .HasForeignKey(d => d.ManufacturerId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_Product_Manufacturer");
+                .HasConstraintName("product_ibfk_4");
 
             entity.HasOne(d => d.NicotineType).WithMany(p => p.Products)
                 .HasForeignKey(d => d.NicotineTypeId)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_Product_NicotineType");
+                .HasConstraintName("product_ibfk_2");
 
             entity.HasOne(d => d.Strength).WithMany(p => p.Products)
                 .HasForeignKey(d => d.StrengthId)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_Product_Strenght");
+                .HasConstraintName("product_ibfk_3");
         });
 
         modelBuilder.Entity<ProductBasket>(entity =>
         {
-            entity.ToTable("ProductBasket");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("productbasket");
+
+            entity.HasIndex(e => e.ProductId, "ProductID");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductBaskets)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_ProductBasket_Product");
+                .HasConstraintName("productbasket_ibfk_1");
         });
 
         modelBuilder.Entity<ProductCount>(entity =>
         {
-            entity.ToTable("ProductCount");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("productcount");
+
+            entity.HasIndex(e => e.ProductId, "ProductID");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductCounts)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_ProductCount_Product");
+                .HasConstraintName("productcount_ibfk_1");
         });
 
         modelBuilder.Entity<ReplenishmentProduct>(entity =>
         {
-            entity.ToTable("ReplenishmentProduct");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("replenishmentproduct");
+
+            entity.HasIndex(e => e.ProductId, "ProductID");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
 
             entity.HasOne(d => d.Product).WithMany(p => p.ReplenishmentProducts)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_ReplenishmentProduct_Product");
+                .HasConstraintName("replenishmentproduct_ibfk_1");
         });
 
         modelBuilder.Entity<Strenght>(entity =>
         {
-            entity.ToTable("Strenght");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("strenght");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Title).HasMaxLength(50);
@@ -186,26 +231,31 @@ public partial class VapeshopContext : DbContext
 
         modelBuilder.Entity<Transaction>(entity =>
         {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("transactions");
+
+            entity.HasIndex(e => e.TransactionStatusId, "TransactionStatusID");
+
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.IsViewed).HasColumnName("isViewed");
+            entity.Property(e => e.Time).HasColumnType("time");
             entity.Property(e => e.TransactionStatusId).HasColumnName("TransactionStatusID");
 
             entity.HasOne(d => d.TransactionStatus).WithMany(p => p.Transactions)
                 .HasForeignKey(d => d.TransactionStatusId)
-                .HasConstraintName("FK_Transactions_TransactionStatus");
-        });
-
-        modelBuilder.Entity<TransactionStatus>(entity =>
-        {
-            entity.ToTable("TransactionStatus");
-
-            entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.Title).HasMaxLength(50);
+                .HasConstraintName("transactions_ibfk_1");
         });
 
         modelBuilder.Entity<TransactionsAndProduct>(entity =>
         {
-            entity.ToTable("TransactionsAndProduct");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("transactionsandproduct");
+
+            entity.HasIndex(e => e.ProductId, "ProductID");
+
+            entity.HasIndex(e => e.TransactionId, "TransactionID");
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
@@ -213,21 +263,38 @@ public partial class VapeshopContext : DbContext
 
             entity.HasOne(d => d.Product).WithMany(p => p.TransactionsAndProducts)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_TransactionsAndProduct_Product");
+                .HasConstraintName("transactionsandproduct_ibfk_2");
 
             entity.HasOne(d => d.Transaction).WithMany(p => p.TransactionsAndProducts)
                 .HasForeignKey(d => d.TransactionId)
-                .HasConstraintName("FK_TransactionsAndProduct_Transactions");
+                .HasConstraintName("transactionsandproduct_ibfk_1");
+        });
+
+        modelBuilder.Entity<TransactionStatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("transactionstatus");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Title).HasMaxLength(50);
         });
 
         modelBuilder.Entity<View>(entity =>
         {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("views");
+
+            entity.HasIndex(e => e.ProductId, "ProductID");
+
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
+            entity.Property(e => e.Time).HasColumnType("time");
 
             entity.HasOne(d => d.Product).WithMany(p => p.Views)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_Views_Product");
+                .HasConstraintName("views_ibfk_1");
         });
 
         OnModelCreatingPartial(modelBuilder);

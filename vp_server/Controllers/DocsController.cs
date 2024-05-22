@@ -93,7 +93,7 @@ namespace vp_server.Controllers
                                         }
                                         else if (i.Nicotine != null)
                                         {
-                                            NicotineType nicotineType = new NicotineType
+                                        Models.NicotineType nicotineType = new Models.NicotineType
                                             {
                                                 Title = i.Nicotine
                                             };
@@ -142,7 +142,7 @@ namespace vp_server.Controllers
                                             db.Products.Add(product);
                                             await db.SaveChangesAsync();
 
-                                            ProductCount PC = new ProductCount();
+                                        Models.ProductCount PC = new Models.ProductCount();
                                             PC.ProductId = product.Id;
                                             if (i.Count >= 0)
                                                 PC.Count = i.Count;
@@ -219,7 +219,7 @@ namespace vp_server.Controllers
                 var Excel = new ExcelGenerate()
                     .Generate(excelData);
 
-                ExcelDocument? excelSave = db.ExcelDocuments.Where(x => x.Id == 1).FirstOrDefault();
+                Models.ExcelDocument? excelSave = db.ExcelDocuments.Where(x => x.Id == 1).FirstOrDefault();
                 if (excelSave != null)
                 {
                     excelSave.DocExcel = Excel;

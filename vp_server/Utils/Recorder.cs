@@ -31,7 +31,7 @@ namespace vp_server.Utils
                 return db.Manufacturers.ToList(); 
         }
         //Получить список количества никотина
-        public List<NicotineType> GetNicotineType()
+        public List<Models.NicotineType> GetNicotineType()
         {
             using (VapeshopContext db = new VapeshopContext())
                 return db.NicotineTypes.ToList();

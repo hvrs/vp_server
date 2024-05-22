@@ -115,7 +115,7 @@ namespace vp_server.API
                 }
                 else
                 {
-                    ProductBasket productBasket = new ProductBasket
+                ProductBasket productBasket = new ProductBasket
                     {
                         ProductId = product.ProductId,
                         Quantity = 1

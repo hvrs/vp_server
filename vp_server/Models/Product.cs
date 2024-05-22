@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
 namespace vp_server.Models;
-
 
 public partial class Product
 {
@@ -25,11 +23,11 @@ public partial class Product
 
     public int? StrengthId { get; set; }
 
-    public int? ManufacturerId { get; set; }
+    public int ManufacturerId { get; set; }
 
     public virtual Category Category { get; set; } = null!;
 
-    public virtual Manufacturer? Manufacturer { get; set; }
+    public virtual Manufacturer Manufacturer { get; set; } = null!;
 
     public virtual NicotineType? NicotineType { get; set; }
 

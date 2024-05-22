@@ -10,11 +10,11 @@ public partial class PaymentDetail
     [Required(ErrorMessage = "Не указано название банка")]
     public string BankName { get; set; } = null!;
 
-    [Required(ErrorMessage ="Не указанан ИНН ")]
+    [Required(ErrorMessage = "Не указанан ИНН ")]
     [RegularExpression(@"^[0-9]+$", ErrorMessage = "Введено не числовое значение")]
-    [StringLength(12,MinimumLength =10, ErrorMessage = "Длина от 10 до 12 цифр")]
+    [StringLength(12, MinimumLength = 10, ErrorMessage = "Длина от 10 до 12 цифр")]
     public string BankInn { get; set; } = null!;
-    [Required(ErrorMessage ="Не указан КПП")]
+    [Required(ErrorMessage = "Не указан КПП")]
     [RegularExpression(@"^[0-9]+$", ErrorMessage = "Введено не числовое значение")]
     [StringLength(9, MinimumLength = 9, ErrorMessage = "Длина 9 цифр")]
     public string BankKpp { get; set; } = null!;
