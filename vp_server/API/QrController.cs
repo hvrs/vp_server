@@ -74,9 +74,16 @@ namespace vp_server.API
                 };
                 db.Transactions.Add(transaction);
                 await db.SaveChangesAsync();
+
                 foreach (var i in basketAndSum.productQ)
                 {
-                    Models.TransactionsAndProduct tP = new Models.TransactionsAndProduct
+                    ProductCount productCount = await db.ProductCounts.FirstOrDefaultAsync(pc => pc.ProductId == i.ProductID);
+                    if (productCount != null)
+                    {
+                        productCount.Count -= i.Quantity;
+                        await db.SaveChangesAsync();
+                    }
+                    TransactionsAndProduct tP = new TransactionsAndProduct
                     {
                         TransactionId = transaction.Id,
                         ProductId = i.ProductID,

@@ -130,7 +130,9 @@ namespace vp_server.API
         [HttpDelete]
         public async void Delete()//https://stackoverflow.com/questions/15220411/entity-framework-delete-all-rows-in-table
         {
-              await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE [ProductBasket]"); 
+              //await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE [ProductBasket]");
+            VapeshopContext deleteTableFor = new VapeshopContext();
+            await deleteTableFor.Database.ExecuteSqlRawAsync($"SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE [Productbasket]");
         }
 
         [HttpDelete("{id}")]

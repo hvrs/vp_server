@@ -10,14 +10,14 @@ namespace vp_server.Models
         public string Manufacturer { get; set; } = "";
         public string? Nicotine { get; set; }
         public string? Strength { get; set; }
-        public double Cost { get; set; }
+        public float Cost { get; set; }
     }
     public class ProductExcelDTO
     {
         [Column(1)]
         public string Title { get; set; } = "";
         [Column(2)]
-        public double Cost { get; set; }
+        public float Cost { get; set; }
         [Column(3)]
         public string Material { get; set; } = "";
         [Column(4)]
@@ -60,7 +60,7 @@ namespace vp_server.Models
     public class idProductsInBasketAndSum
     {
         public List<ProductAndQuantity> productQ { get; set;}
-        public double Sum { get; set; }
+        public float Sum { get; set; }
         public idProductsInBasketAndSum()
         {
             productQ = new List<ProductAndQuantity>();

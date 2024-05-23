@@ -11,7 +11,7 @@ public partial class Transaction
 
     public TimeOnly Time { get; set; }
 
-    public double Sum { get; set; }
+    public float Sum { get; set; }
 
     public bool IsViewed { get; set; }
 
