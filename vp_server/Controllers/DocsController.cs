@@ -8,12 +8,6 @@ using System.IO;
 using OfficeOpenXml;
 using System.Text.Json;
 
-using ZXing;
-using ZXing.Common;
-using ZXing.QrCode;
-using System.Drawing;
-using ZXing.QrCode.Internal;
-
 
 namespace vp_server.Controllers
 {
