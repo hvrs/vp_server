@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using vp_server.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -58,7 +59,7 @@ namespace vp_server.API
                                                 Manufacturer = pc.Manufacturer.Title,
                                                 Nicotine = pc.NicotineType.Title,
                                                 Strength = pc.Strength.Title,
-                                                Cost = pc.Cost
+                                                Cost = pc.Cost,                                               
                                             };
                         productInBucket.product = await prod.FirstOrDefaultAsync();
                         productInBucket.quantityInBusket = item.Quantity;
@@ -69,7 +70,8 @@ namespace vp_server.API
                 }
                 else
                 {
-                    return Ok(0);
+                    List<DTOProductAndQuantity> productDtoQuant = new List<DTOProductAndQuantity>();
+                    return Ok(productDtoQuant);
                 }
             }
             catch
@@ -90,9 +92,8 @@ namespace vp_server.API
                         if (await db.ProductBaskets.AnyAsync(pb => pb.ProductId == product.ProductId))
                         {
                             ProductBasket pb = await db.ProductBaskets.Where(pb => pb.ProductId == product.ProductId).FirstOrDefaultAsync();
-                            if (pb != null)
-                                pb.Quantity++;
-                            await db.SaveChangesAsync();
+                            if (pb != null && pb.Quantity < db.ProductCounts.FirstOrDefault(pc => pc.ProductId == product.ProductId).Count)
+                                pb.Quantity++; await db.SaveChangesAsync();
                         }
                         else
                         {
