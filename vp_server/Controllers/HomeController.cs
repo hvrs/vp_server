@@ -76,7 +76,9 @@ namespace vp_server.Controllers
                     Products = productList,
                     Categories = db.Categories.ToList(),
                     Manufacturers = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(manufacturers, "Id", "Title"),
-                    categroyNow = category
+                    categroyNow = category,
+                    productNameNow = name,
+                    manufacturerNow = manufacturer
                };
                return View(PAC);
             }

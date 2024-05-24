@@ -11,17 +11,17 @@
                 {
                     if (item.ParentCategoryId == null)
                     {
-                        @Html.ActionLink(item.CategoryName, "Index", "Home", new { category = item.Id}, new { @class = "list-group-item" })
+                        @Html.ActionLink(item.CategoryName, "Index", "Home", new { category = item.Id, name = Model.productNameNow, manufacturer = Model.manufacturerNow}, new { @class = "list-group-item" })
                         foreach (var it in Model.Categories)
                         {
                             if (it.ParentCategoryId == item.Id)
                             {
-                                @Html.ActionLink(it.CategoryName, "Index", "Home", new { category = it.Id }, new { @class = "list-group-item secondary-item" })
+                                @Html.ActionLink(it.CategoryName, "Index", "Home", new { category = it.Id, name = Model.productNameNow, manufacturer = Model.manufacturerNow }, new { @class = "list-group-item secondary-item" })
                                 foreach (var i in Model.Categories)
                                 {
                                     if (i.ParentCategoryId == it.Id)
                                     {
-                                        @Html.ActionLink(i.CategoryName, "Index", "Home", new {category = i.Id}, new {@class = "list-group-item third-item"})
+                                        @Html.ActionLink(i.CategoryName, "Index", "Home", new { category = i.Id, name = Model.productNameNow, manufacturer = Model.manufacturerNow }, new { @class = "list-group-item third-item" })
                                     }
                                 }
                             }

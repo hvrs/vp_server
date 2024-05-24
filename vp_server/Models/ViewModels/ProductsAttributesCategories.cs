@@ -8,5 +8,7 @@ namespace vp_server.Models.ViewModels
         public IEnumerable<Category> Categories { get; set; }
         public SelectList Manufacturers { get; set; }
         public int? categroyNow { get; set; }
+        public int? manufacturerNow { get; set; }
+        public string? productNameNow { get; set; }
     }
 }

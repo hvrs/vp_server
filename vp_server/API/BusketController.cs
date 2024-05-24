@@ -132,7 +132,8 @@ namespace vp_server.API
         {
               //await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE [ProductBasket]");
             VapeshopContext deleteTableFor = new VapeshopContext();
-            await deleteTableFor.Database.ExecuteSqlRawAsync($"SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE [Productbasket]");
+            await deleteTableFor.Database.ExecuteSqlRawAsync($"SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE Productbasket");
+            await deleteTableFor.Database.ExecuteSqlRawAsync($"SET FOREIGN_KEY_CHECKS = 1;");
         }
 
         [HttpDelete("{id}")]
