@@ -62,7 +62,6 @@ namespace vp_server.Utils
             sheet.Cells[1, 1, row, col + 3].AutoFitColumns();
             return package.GetAsByteArray();
         }
-
         public bool columnValidate(ExcelWorksheet worksheet)//Проверка соответствия заголовков
         {
             try
@@ -122,9 +121,9 @@ namespace vp_server.Utils
                             col.Property.SetValue(tnew, val.GetValue<int>());
                             return;
                         }
-                        if (col.Property.PropertyType == typeof(double))
+                        if (col.Property.PropertyType == typeof(float))
                         {
-                            col.Property.SetValue(tnew, val.GetValue<double>());
+                            col.Property.SetValue(tnew, val.GetValue<float>());
                             return;
                         }
                         if (col.Property.PropertyType == typeof(DateTime))

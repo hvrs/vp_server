@@ -6,13 +6,14 @@
     <body>
         <div class="wrapper">
             <div class="sidebar">
-                <ul class="list-group tagota">
-                @foreach(var item in Model.Categories) @* Реализация трехуровнегово меню (больше пока не нужно) *@
+                <ul class="list-group tagota">                
+                <input value="Изменить тип категорий" type="button" class="btn btn-primary" id="btn_update"/>
+                @foreach(var item in Model.Categories.Where(mc=>mc.isProduct==Model.isProduct)) @* Реализация трехуровнегово меню (больше пока не нужно) *@
                 {
                     if (item.ParentCategoryId == null)
                     {
-                        @Html.ActionLink(item.CategoryName, "Index", "Home", new { category = item.Id, name = Model.productNameNow, manufacturer = Model.manufacturerNow}, new { @class = "list-group-item" })
-                        foreach (var it in Model.Categories)
+                        @Html.ActionLink(item.CategoryName, "Index", "Home", new { category = item.Id, name = Model.productNameNow, manufacturer = Model.manufacturerNow}, new { @class = "list-group-item"})
+                    foreach (var it in Model.Categories)
                         {
                             if (it.ParentCategoryId == item.Id)
                             {
@@ -34,6 +35,23 @@
             
             </div>
         </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+            $("#btn_update").click(function () {
+                    $.ajax({
+                        url: '@Url.Action("updateType", "Home")',
+                        type: 'POST',
+                        data: { "statusNow": '@Model.isProduct' },
+                    success: function (request) {
+                        window.location.href = '@Url.Action("Index", "Home", new { category = Model.categroyNow, name = Model.productNameNow, manufacturer = Model.manufacturerNow })';
+                    }, error: function () {
+                        alert("Неудача((")
+                    }
+                    });
+                });
+            });
+        </script>
+        
     <style>
         .link-in-menu{
             font-size: 10pt;

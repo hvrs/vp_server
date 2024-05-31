@@ -44,6 +44,8 @@ public partial class VapeshopContext : DbContext
 
     public virtual DbSet<View> Views { get; set; }
 
+    public virtual DbSet<Statusmain> Statusmains { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseMySql("server=localhost;port=3306;user=root;password=Passw0rd;database=vapeshop", ServerVersion.Parse("8.2.0-mysql"));
@@ -64,6 +66,7 @@ public partial class VapeshopContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.CategoryName).HasMaxLength(50);
+            entity.Property(e => e.isProduct).HasColumnName("isProduct");
             entity.Property(e => e.ParentCategoryId).HasColumnName("ParentCategoryID");
 
             entity.HasOne(d => d.ParentCategory).WithMany(p => p.InverseParentCategory)
@@ -295,6 +298,16 @@ public partial class VapeshopContext : DbContext
             entity.HasOne(d => d.Product).WithMany(p => p.Views)
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("views_ibfk_1");
+        });
+
+        modelBuilder.Entity<Statusmain>(entity =>
+        {
+            entity.HasKey(e => e.IdStatusMain).HasName("PRIMARY");
+
+            entity.ToTable("statusmain");
+
+            entity.Property(e => e.IdStatusMain).HasColumnName("idStatusMain");
+            entity.Property(e => e.IsProductType).HasColumnName("isProductType");
         });
 
         OnModelCreatingPartial(modelBuilder);

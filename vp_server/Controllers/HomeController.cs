@@ -12,9 +12,9 @@ namespace vp_server.Controllers
     {
         Recorder recorder = new Recorder();
         public IActionResult Index(string? name, int? category, int? manufacturer)
-        {
+        {                  
             using (VapeshopContext db = new VapeshopContext())
-            {
+            {             
                IQueryable<Product> products = db.Products.Include(p=>p.Manufacturer).Include(p=>p.Category).Include(p=>p.NicotineType).Include(p=>p.Strength);
                List<Product> productList = new List<Product>();
                if (name != null)
@@ -69,17 +69,18 @@ namespace vp_server.Controllers
                         productList = products.Where(p => p.ManufacturerId == manufacturer).ToList();
 
                 }
-               List<Manufacturer> manufacturers = db.Manufacturers.ToList();
-               manufacturers.Insert(0, new Manufacturer { Title = "Все", Id = 0 });
-               ProductsAttributesCategories PAC = new ProductsAttributesCategories
-               {
+                List<Manufacturer> manufacturers = db.Manufacturers.ToList();
+                manufacturers.Insert(0, new Manufacturer { Title = "Все", Id = 0 });
+                ProductsAttributesCategories PAC = new ProductsAttributesCategories
+                {
                     Products = productList,
                     Categories = db.Categories.ToList(),
                     Manufacturers = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(manufacturers, "Id", "Title"),
                     categroyNow = category,
                     productNameNow = name,
-                    manufacturerNow = manufacturer
-               };
+                    manufacturerNow = manufacturer,
+                    isProduct = db.Statusmains.FirstOrDefault().IsProductType
+                };
                return View(PAC);
             }
         }      
@@ -226,7 +227,7 @@ namespace vp_server.Controllers
                 return Json(PWlist);
             }         
         }
-
+        
         [HttpPost]
         public async Task<IActionResult> _Quantity(int idProduct, int quantity)
         {
@@ -442,6 +443,20 @@ namespace vp_server.Controllers
                     
                 }
                 return RedirectToAction("UpdateCategory");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> updateType(bool statusNow)//Переключение типа категорий в меню
+        {
+            using (VapeshopContext db = new VapeshopContext())
+            {
+                Statusmain? statusmain = await db.Statusmains.FirstOrDefaultAsync();
+                if (statusmain != null)
+                {
+                    statusmain.IsProductType = !statusNow;
+                    await db.SaveChangesAsync();
+                }
+                return Ok();
             }
         }
 

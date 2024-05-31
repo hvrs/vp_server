@@ -12,7 +12,7 @@ namespace vp_server.Models
         public string? Strength { get; set; }
         public float Cost { get; set; }
     }
-    public class ProductExcelDTO
+    public class ProductExcelDTO//Для импорта файла с новой продукцией в систему
     {
         [Column(1)]
         public string Title { get; set; } = "";
@@ -32,6 +32,13 @@ namespace vp_server.Models
         public string Manufacturer { get; set; } = "";
         [Column(9)]
         public int Count { get; set; } = 0;
+    }
+    public class ProductReplenishment//Для считывания данных из накладной о пополнении продукции
+    {
+        [Column(1)]
+        public string Title { get; set; } = "";
+        [Column(2)]
+        public int Count { get; set;}
     }
 
     [AttributeUsage(AttributeTargets.All)]
