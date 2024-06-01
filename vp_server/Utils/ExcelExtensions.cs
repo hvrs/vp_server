@@ -72,15 +72,16 @@ namespace vp_server.Utils
             sheet.Cells["C1:E1"].Merge = true;
             sheet.Cells["C1"].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
             sheet.Cells["C1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            sheet.Cells["C1:E1"].Value = $"Товарный чек №1{DataModel.transaction.Id}";
+            sheet.Cells["C1:E1"].Value = $"Товарный чек №{DataModel.transaction.Id}";
             //2 строка
-            sheet.Cells["A2"].Value = $"Организация";
+            sheet.Cells["A2"].Value = $"Организация:";
             sheet.Cells["A2"].AutoFitColumns();
             sheet.Cells["B2"].Value = DataModel.NameCompany;//Название организации
             sheet.Cells["H2"].Value = "От"; 
             sheet.Cells["I2"].Value = $"{DataModel.transaction.Date.Day}"; 
             sheet.Cells["J2"].Value = $"{DataModel.transaction.Date.Month}"; 
-            sheet.Cells["K2"].Value = $"{DataModel.transaction.Date.Year}";
+            sheet.Cells["K2"].Value = $"{DataModel.transaction.Date.Year} года";
+            sheet.Cells["I2:K2"].AutoFitColumns();
             sheet.Cells["H2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
             //4 строка
             sheet.Cells["A4:D4"].Merge = true;
@@ -109,18 +110,26 @@ namespace vp_server.Utils
                     sheet.Cells[row, 8].Value = item.Cost * item.Quality;
                     row++;
                 }
+                sheet.Cells[5, 1, row-1, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                sheet.Cells[5, 1, row-1, 8].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                sheet.Cells[5, 1, row-1, 8].Style.Border.Right.Style = ExcelBorderStyle.Thin;
             }
             //Конец некоторого цикла
 
             //Заключительная строка
-            sheet.Cells[row + 1, 1].Value = "Итого:";
-            sheet.Cells[row + 1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+            sheet.Cells[row, 1].Value = "Итого:";
+            sheet.Cells[row, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+            sheet.Cells[row, 2].Value =$"{DataModel.transaction.Sum} руб.";
+            sheet.Cells[row, 2].AutoFitColumns();
+            sheet.Cells[row, 1, row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+            sheet.Cells[row, 1, row, 2].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            sheet.Cells[row, 1, row, 2].Style.Border.Right.Style = ExcelBorderStyle.Thin;
 
-            sheet.Cells[row + 1, 2].Value = DataModel.transaction.Sum;
-            sheet.Cells[row + 1, 4].Value = "Подпись:";           
-            sheet.Cells[row + 1, 5, row + 1, 8].Merge = true;
-            sheet.Cells[row + 1, 5, row + 1, 8].Value = "____________________________________";
+            sheet.Cells[row, 4].Value = "Подпись:";           
+            sheet.Cells[row, 5, row, 8].Merge = true;
+            sheet.Cells[row, 5, row, 8].Value = "____________________________________";
 
+            sheet.Protection.IsProtected = true;
             return package.GetAsByteArray();
             
             

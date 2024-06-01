@@ -227,6 +227,31 @@ namespace vp_server.Controllers
                 //return File(Excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Отчет {dateStart}-{dateEnd}.xlsx");
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> GetReceipt(int TransactionID)
+        {
+            using(VapeshopContext db = new VapeshopContext())
+            {
+                var products = from t in db.TransactionsAndProducts.Where(tp => tp.TransactionId == TransactionID).Include(tp => tp.Product).Include(tp => tp.Transaction)
+                               select new TransactionProductDTO()
+                               {
+                                   Id = t.Product.Id,
+                                   Name = t.Product.Title,
+                                   Cost = t.Product.Cost,
+                                   Quality = t.Quantitly
+                               };
+
+                ReceiptDataModel receiptDataModel = new ReceiptDataModel
+                {
+                    productsInTransaction = products,
+                    transaction = await db.Transactions.Where(t => t.Id == TransactionID).FirstOrDefaultAsync(),
+                    NameCompany = db.PaymentDetails.FirstOrDefault().FirmName
+                };
+                var receiptExcel = new ExcelGenerate().GenerateReceipt(receiptDataModel);
+                return File(receiptExcel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Товарный чек №{receiptDataModel.transaction.Id}.xlsx");
+
+            }
+        }
         #endregion
         public async Task<IActionResult> Download(int id)
         {

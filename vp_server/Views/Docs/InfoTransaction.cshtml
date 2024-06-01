@@ -39,7 +39,14 @@
                         <label>Статус транзакции:</label>  <input id="stst" value="@Model.Status" disabled />
                         </div>
                         <div class="col">
-                            <input id="btnAccept" class="btn btn-primary" value="Получить чек" type="button" />
+                            @if (Model.Status == "Оплачена")
+                        {
+                            @using (Html.BeginForm("GetReceipt", "Docs", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                <input type="number" hidden="hidden" name="TransactionID" value="@Model.Id" />
+                                <input type="submit" class="btn btn-primary" value="Получить чек" />
+                            }
+                        }                                             
                         </div>
                     </div>
                 </div>
