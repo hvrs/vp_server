@@ -23,5 +23,12 @@
         public DateOnly dateReceipt { get; set; }//дата поступления
 
     }
+
+    public class ReceiptDataModel//Модель данных, необходимая для генерации чека
+    {
+        public IEnumerable<TransactionProductDTO>? productsInTransaction { get; set; }        
+        public Transaction? transaction { get; set; }
+        public string? NameCompany { get; set; }
+    }
     
 }

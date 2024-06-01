@@ -31,7 +31,7 @@ namespace vp_server.Controllers
         {
             using (VapeshopContext db = new VapeshopContext())
             {
-                Models.Transaction transaction = db.Transactions.Where(t => t.Id == IdTransaction).FirstOrDefault();
+                Models.Transaction? transaction = db.Transactions.Where(t => t.Id == IdTransaction).FirstOrDefault();
                 if (transaction!=null)
                 {
                     transaction.IsViewed = true;
@@ -208,15 +208,17 @@ namespace vp_server.Controllers
                                        cost = (float)pr.Product.Cost
                                    }
                 };
- 
-                
-                var Excel = new ExcelGenerate()
-                    .Generate(excelData);
+
+
+                 var Excel = new ExcelGenerate()
+                     .Generate(excelData);
+                //var receipt = new ExcelGenerate().GenerateReceipt();
 
                 Models.ExcelDocument? excelSave = db.ExcelDocuments.Where(x => x.Id == 1).FirstOrDefault();
                 if (excelSave != null)
                 {
                     excelSave.DocExcel = Excel;
+                    //excelSave.DocExcel = receipt;
                     await db.SaveChangesAsync();
                 }
                 //var exePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files\\"));                                                             

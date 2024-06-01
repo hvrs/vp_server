@@ -1,5 +1,6 @@
 ﻿using OfficeOpenXml;
 using System.Reflection;
+using OfficeOpenXml.Style;
 using vp_server.Models;
 namespace vp_server.Utils
 {
@@ -62,6 +63,69 @@ namespace vp_server.Utils
             sheet.Cells[1, 1, row, col + 3].AutoFitColumns();
             return package.GetAsByteArray();
         }
+
+        public byte[] GenerateReceipt(ReceiptDataModel DataModel)
+        {
+            var package = new ExcelPackage();
+            var sheet = package.Workbook.Worksheets.Add("Товарный чек");
+            //1 строка
+            sheet.Cells["C1:E1"].Merge = true;
+            sheet.Cells["C1"].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            sheet.Cells["C1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            sheet.Cells["C1:E1"].Value = $"Товарный чек №1{DataModel.transaction.Id}";
+            //2 строка
+            sheet.Cells["A2"].Value = $"Организация";
+            sheet.Cells["A2"].AutoFitColumns();
+            sheet.Cells["B2"].Value = DataModel.NameCompany;//Название организации
+            sheet.Cells["H2"].Value = "От"; 
+            sheet.Cells["I2"].Value = $"{DataModel.transaction.Date.Day}"; 
+            sheet.Cells["J2"].Value = $"{DataModel.transaction.Date.Month}"; 
+            sheet.Cells["K2"].Value = $"{DataModel.transaction.Date.Year}";
+            sheet.Cells["H2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+            //4 строка
+            sheet.Cells["A4:D4"].Merge = true;
+            sheet.Cells["A4"].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+            sheet.Cells["A4"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            sheet.Cells["A4:D4"].Value = "Наименование товара";
+            sheet.Cells["E4"].Value = "Артикул";//ID товара в системе
+            sheet.Cells["F4"].Value = "Кол-во";
+            sheet.Cells["G4"].Value = "Цена";
+            sheet.Cells["H4"].Value = "Сумма";
+            sheet.Cells["A4:H4"].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+            sheet.Cells["A4:H4"].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            sheet.Cells["A4:H4"].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            //Некоторый цикл
+            int row = 5; //Строка
+            int col = 1; //Столбек
+            if (DataModel.productsInTransaction != null)
+            {
+                foreach (var item in DataModel.productsInTransaction)
+                {
+                    sheet.Cells[row, col, row, 4].Merge = true;
+                    sheet.Cells[row, col, row, 4].Value = item.Name;
+                    sheet.Cells[row, 5].Value = item.Id;
+                    sheet.Cells[row, 6].Value = item.Quality;
+                    sheet.Cells[row, 7].Value = item.Cost;
+                    sheet.Cells[row, 8].Value = item.Cost * item.Quality;
+                    row++;
+                }
+            }
+            //Конец некоторого цикла
+
+            //Заключительная строка
+            sheet.Cells[row + 1, 1].Value = "Итого:";
+            sheet.Cells[row + 1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+
+            sheet.Cells[row + 1, 2].Value = DataModel.transaction.Sum;
+            sheet.Cells[row + 1, 4].Value = "Подпись:";           
+            sheet.Cells[row + 1, 5, row + 1, 8].Merge = true;
+            sheet.Cells[row + 1, 5, row + 1, 8].Value = "____________________________________";
+
+            return package.GetAsByteArray();
+            
+            
+        }
+
         public bool columnValidate(ExcelWorksheet worksheet)//Проверка соответствия заголовков
         {
             try
