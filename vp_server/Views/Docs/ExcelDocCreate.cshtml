@@ -11,7 +11,7 @@
                     <div class="row">
                         <div class="col">
                         <label class="form-label">Период:</label>
-                        <input type="text" name="daterange" value="03/12/2024 - 01/15/2024" class="form-control" />
+                        <input type="text" name="daterange" value="05/20/2024 - 06/20/2024" class="form-control" />
                         <script type="text/javascript" src="~/js/datepicker/moment.min.js"></script>
                         <script type="text/javascript" src="~/js/datepicker/daterangepicker.min.js"></script>
                         <link rel="stylesheet" type="text/css" href="~/css/daterangepicker.css" />
@@ -27,8 +27,21 @@
                                 <input type="submit" class="btn btn-primary" value="Отправить файл" id="btnSendExcel" disabled="disabled"/>
                             </p>
                         }
-                            <input type="submit" class="btn btn-primary" value="Получить форму заполнения" id="btnGetExcelForm"/>
-                        </div>                                          
+                            <input type="submit" class="btn btn-primary" value="Получить форму заполнения" id="btnGetExcelForm"/> 
+                            <input type="submit" class="btn btn-primary" value="Получить накладную" id="btnGetExcelReplishment"/> 
+                            
+                            <h3 class="col-form-label-lg">Загрузка накладной</h3>
+                        @using (Html.BeginForm("ReplishmentVarietyProducts", "Docs", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <p>
+                                <label for="uploadExcelR" class="form-label">Загрузить накладную Excel:</label>
+                                <input class="form-control" id="uploadExcelR" type="file" name="ExcelFile" enctype="multipart/form-data" />
+                            </p>
+                            <p>
+                                <input type="submit" class="btn btn-primary" value="Отправить файл" id="btnSendExcelR" disabled="disabled" />
+                            </p>
+                        }
+                    </div>                                          
                     </div>                                 
                 </div>
             </div>
@@ -53,7 +66,12 @@
             });
             $(document).ready(function () {
                 $("#btnGetExcelForm").click(function () {
-                window.location = '/Docs/getExcelForm';
+                window.location = '/Docs/getExcelForm?type=1';
+                });
+            });
+            $(document).ready(function () {
+                $("#btnGetExcelReplishment").click(function () {
+                    window.location = '/Docs/getExcelForm?type=2';
                 });
             });
 
@@ -69,6 +87,21 @@
                     }
 
                     
+                } else {
+                    alert("файл не выбран")
+                }
+            });
+
+            document.getElementById('uploadExcelR').addEventListener('change', function () {
+            var fileExtension = ['xlsx'];
+                if (this.value) {
+                    if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+                        alert("Загружаемый файл имеет формат, отличный от поддерживаемого – .xlsx")
+                        $('#btnSendExcelR').prop('disabled', true);
+                    } else {
+                        $('#btnSendExcelR').prop('disabled', false);
+
+                    }
                 } else {
                     alert("файл не выбран")
                 }

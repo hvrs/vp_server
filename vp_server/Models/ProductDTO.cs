@@ -39,6 +39,8 @@ namespace vp_server.Models
         public string Title { get; set; } = "";
         [Column(2)]
         public int Count { get; set;}
+        [Column(3)]
+        public DateTime date { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.All)]

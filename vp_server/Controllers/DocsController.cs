@@ -162,6 +162,29 @@ namespace vp_server.Controllers
             }
             
         }
+        [HttpPost]
+        public async Task<IActionResult> ReplishmentVarietyProducts(IFormFile excelFile)//Получение файла Excel с информацией о пополненной продукции и запись пополнения в базу данных
+        {
+            if (excelFile !=null)
+            {
+                var stream = excelFile.OpenReadStream();
+                using (ExcelPackage package = new ExcelPackage(stream))
+                {
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    ExcelGenerate validate = new ExcelGenerate();
+                    if (validate.columnValidateR(worksheet))
+                    {
+                        IEnumerable<ProductReplenishment> excelCollection = worksheet.FromSheetToModel<ProductReplenishment>();
+                    }
+                    else
+                    {
+                        return Content($"столбцы не соответствуют принимаемой форме");
+                    }
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            else { return BadRequest(); }
+        }
 
         [HttpPost]
         public async Task<IActionResult> SetAccept(int idTransaction)
@@ -212,13 +235,12 @@ namespace vp_server.Controllers
 
                  var Excel = new ExcelGenerate()
                      .Generate(excelData);
-                //var receipt = new ExcelGenerate().GenerateReceipt();
+                
 
                 Models.ExcelDocument? excelSave = db.ExcelDocuments.Where(x => x.Id == 1).FirstOrDefault();
                 if (excelSave != null)
                 {
-                    excelSave.DocExcel = Excel;
-                    //excelSave.DocExcel = receipt;
+                    excelSave.DocExcel = Excel;                   
                     await db.SaveChangesAsync();
                 }
                 //var exePath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files\\"));                                                             
@@ -266,10 +288,18 @@ namespace vp_server.Controllers
             }
         }
         
-        public IActionResult getExcelForm()
+        public IActionResult getExcelForm(int type)
         {
-            byte[] excel = System.IO.File.ReadAllBytes(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Utils\\Форма.xlsx")));
-            return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Форма заполения.xlsx");
+            if (type==1)
+            {
+                byte[] excel = System.IO.File.ReadAllBytes(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Utils\\Форма.xlsx")));
+                return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Форма заполения.xlsx");
+            }else
+            {
+                byte[] excel = System.IO.File.ReadAllBytes(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Utils\\Накладная.xlsx")));
+                return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Накладная для системы.xlsx");
+            }
+            
         }
         
         

@@ -7,6 +7,7 @@ namespace vp_server.Utils
     public class ExcelGenerate
     {
         private string[] columnTrueNames = { "Название", "Стоимость", "Материал", "Вкус", "Категория", "Содержание никотина", "Крепкость продукции", "Производитель", "Количество на складе" };
+        private string[] columnTrueNamesR = { "Название продукта", "Количество", "Дата пополнения"};
         public byte[] Generate(ExcelDataModel dataModel /*DateOnly dateEnd*/)//Создание отчета
         {
             var package = new ExcelPackage();
@@ -154,6 +155,25 @@ namespace vp_server.Utils
                 return false;
             }
         }
+        public bool columnValidateR(ExcelWorksheet worksheet)//Проверка соответствия заголовков
+        {
+            try
+            {
+                int allColumns = worksheet.Dimension.End.Column;
+                for (int column = 1; column <= allColumns; column++)
+                {
+                    if (worksheet.Cells[1, column].Value.ToString() != columnTrueNamesR[column - 1])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
       
 
     } 
@@ -209,7 +229,7 @@ namespace vp_server.Utils
                     return tnew;
                 });
             return collection;
-        }
+        }      
     }
    
 }
