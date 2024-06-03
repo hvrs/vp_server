@@ -175,6 +175,32 @@ namespace vp_server.Controllers
                     if (validate.columnValidateR(worksheet))
                     {
                         IEnumerable<ProductReplenishment> excelCollection = worksheet.FromSheetToModel<ProductReplenishment>();
+                        using (VapeshopContext db = new VapeshopContext())
+                        {
+                            foreach (var item in excelCollection)
+                            {
+                                if (item.Title != null && item.Count != 0 && item.Count != null && item.date != null && await db.Products.AnyAsync(p=>p.Title.ToLower() == item.Title.ToLower()))
+                                {
+                                    int idProduct = db.Products.Where(p => p.Title.ToLower() == item.Title.ToLower()).FirstOrDefault().Id;
+
+                                    ProductCount? productCount = await db.ProductCounts.Where(pc => pc.ProductId == idProduct).FirstOrDefaultAsync();
+                                    if (productCount != null)
+                                    {
+                                        productCount.Count += item.Count;
+                                        await db.SaveChangesAsync();
+
+                                        ReplenishmentProduct replenishmentProduct = new ReplenishmentProduct
+                                        {
+                                            Date = DateOnly.FromDateTime((DateTime)item.date),
+                                            ProductId = idProduct,
+                                            Quantity = (int)item.Count
+                                        };
+                                        db.ReplenishmentProducts.Add(replenishmentProduct);
+                                        await db.SaveChangesAsync();
+                                    }
+                                }
+                            }
+                        }
                     }
                     else
                     {
