@@ -199,7 +199,7 @@ namespace vp_server.Controllers
                 {
                     IQueryable<View> vws = db.Views.Where(v => v.ProductId == idProduct).Where(v => v.Date == dateStart).OrderBy(v => v.Time);
                     IQueryable<TransactionsAndProduct> TAP = db.TransactionsAndProducts.Where(t => t.ProductId == idProduct).Include(t => t.Transaction).Where(t => t.Transaction.Date == dateStart).OrderBy(t => t.Transaction.Time);
-                    for (int i = 8; i <= 20; i++)
+                    for (int i = 8; i <= 22; i++)
                     {
                         int Counter = 0;
                         ProductViews PW = new ProductViews();

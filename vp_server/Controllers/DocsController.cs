@@ -144,6 +144,15 @@ namespace vp_server.Controllers
                                                 PC.Count = 0;
                                             db.ProductCounts.Add(PC);
                                             await db.SaveChangesAsync();
+
+                                        ReplenishmentProduct replenishmentProduct = new ReplenishmentProduct()
+                                        {
+                                            Date = DateOnly.FromDateTime(DateTime.Now),
+                                            ProductId = product.Id,                                          
+                                            Quantity = (int)PC.Count
+                                        };
+                                        db.ReplenishmentProducts.Add(replenishmentProduct);
+                                        await db.SaveChangesAsync();
                                         }
                                     }                               
                             }
