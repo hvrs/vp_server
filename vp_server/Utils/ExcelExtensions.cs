@@ -8,6 +8,21 @@ namespace vp_server.Utils
     {
         private string[] columnTrueNames = { "Название", "Стоимость", "Материал", "Вкус", "Категория", "Содержание никотина", "Крепкость продукции", "Производитель", "Количество на складе" };
         private string[] columnTrueNamesR = { "Название продукта", "Количество", "Дата пополнения"};
+        private Dictionary<int, string> mounths = new Dictionary<int, string>()
+        {
+            {1,"Января" },
+            {2,"Февраля" },
+            {3,"Марта" },
+            {4,"Апреля" },
+            {5,"Мая" },
+            {6,"Июня" },
+            {7,"Июля" },
+            {8,"Августа" },
+            {9,"Сентября" },
+            {10,"Октября" },
+            {11,"Ноября" },
+            {12,"Декабря" },
+        };
         public byte[] Generate(ExcelDataModel dataModel /*DateOnly dateEnd*/)//Создание отчета
         {
             var package = new ExcelPackage();
@@ -80,10 +95,11 @@ namespace vp_server.Utils
             sheet.Cells["B2"].Value = DataModel.NameCompany;//Название организации
             sheet.Cells["H2"].Value = "От"; 
             sheet.Cells["I2"].Value = $"{DataModel.transaction.Date.Day}"; 
-            sheet.Cells["J2"].Value = $"{DataModel.transaction.Date.Month}"; 
+            sheet.Cells["J2"].Value = $"{mounths[DataModel.transaction.Date.Month]}"; 
             sheet.Cells["K2"].Value = $"{DataModel.transaction.Date.Year} года";
             sheet.Cells["I2:K2"].AutoFitColumns();
             sheet.Cells["H2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+            sheet.Cells["I2:K2"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
             //4 строка
             sheet.Cells["A4:D4"].Merge = true;
             sheet.Cells["A4"].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
@@ -115,7 +131,7 @@ namespace vp_server.Utils
                 sheet.Cells[5, 1, row-1, 8].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                 sheet.Cells[5, 1, row-1, 8].Style.Border.Right.Style = ExcelBorderStyle.Thin;
             }
-            //Конец некоторого цикла
+            //Конец некоторого цикла           
 
             //Заключительная строка
             sheet.Cells[row, 1].Value = "Итого:";
