@@ -24,6 +24,11 @@ namespace vp_server.API
                 Models.PaymentDetail paymentDetail = await db.PaymentDetails.FirstOrDefaultAsync();
                 if (paymentDetail != null)
                 {
+                    float Sum = float.Parse(sum);
+                    if (Sum == Math.Floor(Sum))
+                    {
+                        sum += ".00";
+                    }
                     string paymenMessage = $"ST00012|Name={paymentDetail.FirmName}" +
                     $"|PersonalAcc={paymentDetail.PersonalRs}|BankName={paymentDetail.BankName}" +
                     $"|BIC={paymentDetail.Bik}|CorrespAcc={paymentDetail.BankKs}" +
