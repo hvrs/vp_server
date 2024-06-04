@@ -319,7 +319,7 @@ namespace vp_server.Controllers
             if (type==1)
             {
                 byte[] excel = System.IO.File.ReadAllBytes(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Utils\\Форма.xlsx")));
-                return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Форма заполения.xlsx");
+                return File(excel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Форма заполнения.xlsx");
             }else
             {
                 byte[] excel = System.IO.File.ReadAllBytes(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "Utils\\Накладная.xlsx")));

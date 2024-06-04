@@ -81,5 +81,5 @@ namespace vp_server.Models
         public int ProductID { get; set; }
         public int Quantity { get; set;}
     }
-   
+
 }

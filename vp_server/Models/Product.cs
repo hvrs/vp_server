@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace vp_server.Models;
 
 public partial class Product
 {
     public int Id { get; set; }
-
+    [Required(ErrorMessage = "Название продукта обязательно к заполнению")]
     public string Title { get; set; } = null!;
 
+    [Required(ErrorMessage = "Стоимость продукта обязательна к заполнению")]
     public float Cost { get; set; }
 
     public string? Material { get; set; }

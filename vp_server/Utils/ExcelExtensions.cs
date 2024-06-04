@@ -29,7 +29,7 @@ namespace vp_server.Utils
             var sheet = package.Workbook.Worksheets.Add("Отчет");          
             sheet.Cells["A1"].Value = "Общее число продаж:";
             sheet.Cells["A2"].Value = "Сумма продаж:";
-            sheet.Cells["A3"].Value = $"Остаток продукции на ";
+            sheet.Cells["A3"].Value = $"Остаток продукции на конец промежутка:";
             sheet.Cells["A4"].Value = $"Поступление продукции:";
 
             sheet.Cells["B1"].Value = dataModel.totalSales.ToString();

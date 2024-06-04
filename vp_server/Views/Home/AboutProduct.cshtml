@@ -26,7 +26,7 @@
                             <input type="number" hidden="hidden" asp-for="Product.Id" value="@Model.Product.Id" />
                             <p>
                                 <label>Название:</label>
-                                <input type="text" class="form-control" asp-for="Product.Title" value="@Model.Product.Title" /><span asp-validation-for="Product.Title" />
+                                <input type="text" class="form-control" id="lbl_title" asp-for="Product.Title" value="@Model.Product.Title" /><span asp-validation-for="Product.Title" />
                             </p>
                             <p>
                                 <label>Стоимость:</label>
@@ -60,7 +60,7 @@
                                 @Html.DropDownListFor(p => p.Product.ManufacturerId, ViewBag.manufacturers as SelectList, null, new { @class = "form-control" })
                             </p>                            
                             <p>
-                                <input type="submit" class="btn btn-primary" value="Обновить" /> @Html.ActionLink("Удалить", "Delete", "Home", new { id = Model.Product.Id }, new { @class = "btn btn-danger" })
+                                <input type="submit" id="btn_submit" class="btn btn-primary" value="Обновить" /> @Html.ActionLink("Удалить", "Delete", "Home", new { id = Model.Product.Id }, new { @class = "btn btn-danger" })
                             </p>
                             <p>
                                 <input type="text" name="daterange" value="03/12/2024 - 01/15/2024" />
@@ -149,7 +149,7 @@
                 document.getElementById("uploadPreview").src = oFREvent.target.result;
             };
         };
-
+     
     </script>
 </body>
 </html>
@@ -159,3 +159,6 @@
     }
 </style>
 <link href="~/css/homeStyle.css" rel="stylesheet" />
+<script src="~/js/jquery.js"></script>
+<script src="~/js/jquery.validate.min.js"></script>
+<script src="~/js/jquery.validate.unobtrusive.min.js"></script>
