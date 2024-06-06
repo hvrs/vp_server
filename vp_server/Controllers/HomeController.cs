@@ -145,7 +145,7 @@ namespace vp_server.Controllers
             return PartialView();
         }
 
-        public IActionResult AddManufacturer()
+        public IActionResult AddPaymentDetails()
         {
             using (VapeshopContext db = new VapeshopContext())
             {
@@ -157,6 +157,19 @@ namespace vp_server.Controllers
                 return View(PM);
             }
             
+        }
+
+        public IActionResult AddManufacturers(string? name)
+        {
+            using (VapeshopContext db = new VapeshopContext())
+            {
+                ManufacturerM manufacturer = new ManufacturerM();
+                if (name != null)
+                    manufacturer.manufacturerList = db.Manufacturers.Where(m => m.Title.Contains(name)).ToList();
+                else
+                    manufacturer.manufacturerList = db.Manufacturers.ToList();       
+                return View(manufacturer);
+            }
         }
         
         public IActionResult UpdateCategory()
@@ -392,9 +405,13 @@ namespace vp_server.Controllers
             {
                 using (VapeshopContext db = new VapeshopContext())
                 {
-                    db.Manufacturers.Add(manufacturer);
-                    await db.SaveChangesAsync();
-                    return RedirectToAction("Index");
+                    if (!db.Manufacturers.Any(m=>m.Title.ToLower() == manufacturer.Title.ToLower()))
+                    {
+                        db.Manufacturers.Add(manufacturer);
+                        await db.SaveChangesAsync();
+                        return RedirectToAction("AddManufacturers");
+                    }
+                    return RedirectToAction("AddManufacturers");
                 }
             }
             return Content("Данные не прошли проверку");

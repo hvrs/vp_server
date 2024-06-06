@@ -3,6 +3,14 @@
     public class PaymentManufacturer
     {
         public PaymentDetail? PaymentDetail { get; set; }
-        public Manufacturer? Manufacturer { get; set; }
     }
+
+    public class ManufacturerM
+    {
+        public Manufacturer manufacturer { get; set; }
+        public List<Manufacturer> manufacturerList { get; set; }
+    }
+
+
+
 }
