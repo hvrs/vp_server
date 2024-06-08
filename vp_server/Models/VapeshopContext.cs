@@ -45,6 +45,7 @@ public partial class VapeshopContext : DbContext
     public virtual DbSet<View> Views { get; set; }
 
     public virtual DbSet<Statusmain> Statusmains { get; set; }
+    public virtual DbSet<RemoveTime> RemoveTimes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -204,6 +205,16 @@ public partial class VapeshopContext : DbContext
             entity.HasOne(d => d.Product).WithMany(p => p.ProductCounts)
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("productcount_ibfk_1");
+        });
+
+        modelBuilder.Entity<RemoveTime>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("removetime");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.DaysToRemove).HasColumnName("DaysToRemove");
         });
 
         modelBuilder.Entity<ReplenishmentProduct>(entity =>

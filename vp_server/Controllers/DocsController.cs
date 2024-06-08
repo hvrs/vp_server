@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System.IO;
 using OfficeOpenXml;
 using System.Text.Json;
+using System.Linq;
 
 
 namespace vp_server.Controllers
@@ -22,7 +23,8 @@ namespace vp_server.Controllers
         {
             using (VapeshopContext db = new VapeshopContext())
             {
-                List<Models.Transaction> trs = db.Transactions.ToList();
+                
+                List<Models.Transaction> trs = db.Transactions.OrderByDescending(t=>t.Date).ThenByDescending(t=>t.Time).ToList();
                 return View(trs);
             }
         }
@@ -308,6 +310,35 @@ namespace vp_server.Controllers
                 return File(receiptExcel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Товарный чек №{receiptDataModel.transaction.Id}.xlsx");
 
             }
+        }
+        [HttpPost]
+        public async Task<int> getDeletionTimeTransaction()
+        {
+            using (VapeshopContext db = new VapeshopContext())
+            {
+                RemoveTime? removeTime = await db.RemoveTimes.FirstOrDefaultAsync();
+                if (removeTime != null)
+                    return removeTime.DaysToRemove;
+            }
+                return 14;
+        }
+        [HttpPost]
+        public async Task<int> updateDeletionTime(int? days)
+        {
+            if (days != 0 && days != null)
+            {
+                using (VapeshopContext db = new VapeshopContext())
+                {
+                    RemoveTime? removeTime = await db.RemoveTimes.FirstOrDefaultAsync();
+                    if (removeTime != null)
+                    {
+                        removeTime.DaysToRemove = (int)days;
+                        await db.SaveChangesAsync();
+                        return removeTime.DaysToRemove;
+                    }
+                }
+            }
+            return 14;
         }
         #endregion
         public async Task<IActionResult> Download(int id)

@@ -11,40 +11,93 @@
         <div class="main">
             <div class="container">
                 <div class="marga">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Дата</th>
-                            <th scope="col">Сумма</th>
-                            </tr>                            
-                        </thead>
-                        <tbody>
-                        @foreach (var item in Model)
-                        {                           
-                            @if (item.IsViewed==true && item.TransactionStatusId==2)
-                            {
-                                cls = "table-primary";
-                            }
-                            else if (item.IsViewed == true && item.TransactionStatusId == 1)
-                            {
-                                cls = "table-warning";
-                            }
-                            else
-                            {
-                                cls = "table-danger";
-                            }
-                            <tr class="@cls" onclick="location.href='@Url.Action("InfoTransaction","Docs", new{IdTransaction = item.Id})'">
-                                <td>@item.Id</td>
-                                <td>@item.Date/@item.Time</td>
-                                <td>@item.Sum &#8381</td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
+                    <div class="row">
+                        <div class="col-7">
+                        <label>Удаление транзакций через:</label>  <input id="inp_num" type="number" /><label> дн.</label> <input type="submit" id="btn_update" value="Обновить" class="btn-outline-primary"/>
+                        </div>                     
+                    </div>
+                    <h2></h2>
+                    <div class="row">
+                        <div class="col-5">
+                        <label>Количество проведенных транзакций:</label> <input type="number" value="@Model.Where(m=>m.TransactionStatusId == 2).Count()" disabled="disabled" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Дата</th>
+                                    <th scope="col">Сумма</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    @if (item.IsViewed == true && item.TransactionStatusId == 2)
+                                    {
+                                        cls = "table-primary";
+                                    }
+                                    else if (item.IsViewed == true && item.TransactionStatusId == 1)
+                                    {
+                                        cls = "table-warning";
+                                    }
+                                    else
+                                    {
+                                        cls = "table-danger";
+                                    }
+                                    <tr class="@cls" onclick="location.href='@Url.Action("InfoTransaction","Docs", new{IdTransaction = item.Id})'">
+                                        <td>@item.Id</td>
+                                        <td>@item.Date/@item.Time</td>
+                                        <td>@item.Sum &#8381</td>
+                                        <td>
+                                        @if (item.TransactionStatusId == 2)
+                                        {
+
+                                            @using (Html.BeginForm("GetReceipt", "Docs", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                            {
+                                                <input type="number" hidden="hidden" name="TransactionID" value="@item.Id" />
+                                                <input type="submit" class="btn-outline-primary" value="Получить чек" />
+                                            }
+                                        }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>              
                 </div>
             </div>
         </div>
+        <script type="text/javascript">
+        $(document).ready(function () {
+            $.ajax({
+                url: '@Url.Action("getDeletionTimeTransaction", "Docs")',
+                type: 'POST',
+                success: function (request) {
+                    $("#inp_num").val(request)
+                },
+                error: function () {
+                    alert("Ошибка получения данных")
+                }
+            });
+
+            $("#btn_update").click(function () {
+                $.ajax({
+                    url: '@Url.Action("updateDeletionTime", "Docs")',
+                    type: 'POST',
+                    data: { "days": $("#inp_num").val() },
+                    success: function (request) {
+                        $("#inp_num").val(request)
+                    },
+                    error: function (){
+                        alert("Ошибка получения данных")
+                    }
+                });
+            });
+        });
+        </script>
         <style>
         .table tbody tr:hover td,
         .table tbody tr:hover th {
