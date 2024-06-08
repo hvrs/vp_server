@@ -42,6 +42,7 @@
                             <tr>
                                 <th scope="col">ID</th>
                                 <th scope="col">Название производителя</th>
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -49,7 +50,14 @@
                             {
                                 <tr>
                                     <td>@m.Id</td>
-                                    <td>@m.Title</td>
+                                    @using (Html.BeginForm("RenameManufacturer", "Home", FormMethod.Post))
+                                    {
+                                        <td>
+                                            <input type="text" name="name" class="form-control" value="@m.Title"/>
+                                            <input type="number" name="id" value="@m.Id" hidden="hidden" />
+                                            </td>
+                                        <td><input type="submit" class="btn btn-primary" value="Обновить" /></td>
+                                    }                                    
                                 </tr>
                             }
                         </tbody>
@@ -60,6 +68,7 @@
         </div>
     </body>
 </html>
+<script src="~/js/jquery.js"></script>
 <script src="~/js/jquery.validate.min.js"></script>
 <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
 <link href="~/css/DocsSheet.css" rel="stylesheet" />

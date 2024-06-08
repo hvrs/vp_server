@@ -330,7 +330,7 @@ namespace vp_server.Controllers
                 {
                     Product? product = db.Products.Where(p => p.Id == PVT.Product.Id).FirstOrDefault();
                     if (product != null)
-                    {
+                    {      
                         product.Title = PVT.Product.Title;
                         product.Cost = PVT.Product.Cost;
                         product.Material = PVT.Product.Material;
@@ -530,6 +530,23 @@ namespace vp_server.Controllers
                 }
                 return Ok();
             }
+        }
+        [HttpPost]
+        public async Task<IActionResult> RenameManufacturer(int id, string? name)
+        {
+            if (name != null)
+            {
+                using (VapeshopContext db = new VapeshopContext())
+                {
+                    Manufacturer? manufacturer = await db.Manufacturers.Where(m => m.Id == id).FirstOrDefaultAsync();
+                    if (manufacturer != null)
+                    {
+                        manufacturer.Title = name;
+                        await db.SaveChangesAsync();
+                    }
+                }
+            }
+            return RedirectToAction("AddManufacturers");
         }
 
         #endregion 
