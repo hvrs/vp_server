@@ -1,7 +1,11 @@
+using vp_server.Utils;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+deleleteTransactions dt = new deleleteTransactions();
+dt.delete();
 
 app.MapControllerRoute(
     name: "default",
