@@ -8,6 +8,7 @@ using System.IO;
 using OfficeOpenXml;
 using System.Text.Json;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 
 namespace vp_server.Controllers
@@ -244,6 +245,28 @@ namespace vp_server.Controllers
         {
             using (VapeshopContext db = new VapeshopContext())
             {
+                var idTransactions = from t in db.Transactions.Where(ts => (ts.Date >= dateStart) && (ts.Date <= dateEnd) && (ts.IsViewed == true) && (ts.TransactionStatusId == 2))
+                                           select t.Id;
+                List<ReceiptDataModel> receiptModel = new List<ReceiptDataModel>();               
+                foreach (var i in idTransactions.ToList())
+                {
+                    var products = from t in db.TransactionsAndProducts.Where(tp => tp.TransactionId == i).Include(tp => tp.Product).Include(tp => tp.Transaction)
+                                   select new TransactionProductDTO()
+                                   {
+                                       Id = t.Product.Id,
+                                       Name = t.Product.Title,
+                                       Cost = t.Product.Cost,
+                                       Quality = t.Quantitly
+                                   };
+                    ReceiptDataModel receiptDataModel = new ReceiptDataModel
+                    {
+                        productsInTransaction = products,
+                        transaction = await db.Transactions.Where(t => t.Id == i).FirstOrDefaultAsync(),
+                        NameCompany = db.PaymentDetails.FirstOrDefault().FirmName
+                    };
+                    receiptModel.Add(receiptDataModel);
+
+                }
                 ExcelDataModel excelData = new ExcelDataModel
                 {
                     totalSales = db.Transactions.Where(ts => (ts.Date >= dateStart) && (ts.Date <= dateEnd) && (ts.IsViewed == true) && (ts.TransactionStatusId == 2)).Count(),              
@@ -266,7 +289,8 @@ namespace vp_server.Controllers
                                        productName = pr.Product.Title,
                                        remains = pr.Count,
                                        cost = (float)pr.Product.Cost
-                                   }
+                                   },
+                    receiptsTransaction = receiptModel
                 };
 
 

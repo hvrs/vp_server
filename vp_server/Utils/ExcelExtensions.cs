@@ -78,81 +78,86 @@ namespace vp_server.Utils
                 sheet.Cells[row, col].Value = "Продукция отсутствует";
             }
             sheet.Cells[1, 1, row, col + 3].AutoFitColumns();
+            var sheet2 = package.Workbook.Worksheets.Add("Чеки");           
+            sheet2 = generateReceiptsSheet(sheet2, dataModel.receiptsTransaction);
             return package.GetAsByteArray();
         }
         public ExcelWorksheet generateReceiptsSheet(ExcelWorksheet sheet, List<ReceiptDataModel> receiptsData)
         {
-            int row = 1;//От этой строки все отталкивается, col статичен для всех чеков
-            foreach (var receipt in receiptsData)
+            if (receiptsData != null)
             {
-                //1 строка
-                sheet.Cells[row, 3, row, 5].Merge = true;
-                sheet.Cells[row,3].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                sheet.Cells[row,3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                sheet.Cells[row, 3, row, 5].Value = $"Товарный чек №{receipt.transaction.Id}";
-
-                row++;//2
-                //2 строка
-                sheet.Cells[row, 1].Value = $"Организация:";
-                sheet.Cells[row, 1].AutoFitColumns();
-                sheet.Cells[row, 2].Value = receipt.NameCompany;
-                sheet.Cells[row, 8].Value = "От";
-                sheet.Cells[row, 9].Value = $"{receipt.transaction.Date.Day}";
-                sheet.Cells[row, 10].Value = $"{mounths[receipt.transaction.Date.Month]}";
-                sheet.Cells[row, 11].Value = $"{receipt.transaction.Date.Year} года";
-                sheet.Cells[row,9,row,11].AutoFitColumns();
-                sheet.Cells[row,8].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                sheet.Cells[row, 9, row, 11].Style.HorizontalAlignment= ExcelHorizontalAlignment.Center;
-
-                row += 2;//4
-                //4 строка
-                sheet.Cells[row, 1, row, 4].Merge = true;
-                sheet.Cells[row,1].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                sheet.Cells[row,1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                sheet.Cells[row, 1, row, 4].Value = "Наименование товара";
-                sheet.Cells[row, 5].Value = "Артикул";
-                sheet.Cells[row, 6].Value = "Кол-во";
-                sheet.Cells[row, 7].Value = "Цена";
-                sheet.Cells[row, 8].Value = "Сумма";
-                sheet.Cells[row,1,row,8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                sheet.Cells[row,1,row,8].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                sheet.Cells[row,1,row,8].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                //Цикл с 5 строки
-                row++;//5
-                int rowStart = row; //Хранение строки, с которой началось заполнение списка продукции
-                if (receipt.productsInTransaction != null)
+                int row = 1;//От этой строки все отталкивается, col статичен для всех чеков
+                foreach (var receipt in receiptsData)
                 {
-                    foreach (var product in receipt.productsInTransaction)
+                    //1 строка
+                    sheet.Cells[row, 3, row, 5].Merge = true;
+                    sheet.Cells[row, 3].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    sheet.Cells[row, 3].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    sheet.Cells[row, 3, row, 5].Value = $"Товарный чек №{receipt.transaction.Id}";
+
+                    row++;//2
+                          //2 строка
+                    sheet.Cells[row, 1].Value = $"Организация:";
+                    sheet.Cells[row, 1].AutoFitColumns();
+                    sheet.Cells[row, 2].Value = receipt.NameCompany;
+                    sheet.Cells[row, 8].Value = "От";
+                    sheet.Cells[row, 9].Value = $"{receipt.transaction.Date.Day}";
+                    sheet.Cells[row, 10].Value = $"{mounths[receipt.transaction.Date.Month]}";
+                    sheet.Cells[row, 11].Value = $"{receipt.transaction.Date.Year} года";
+                    sheet.Cells[row, 9, row, 11].AutoFitColumns();
+                    sheet.Cells[row, 8].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    sheet.Cells[row, 9, row, 11].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+                    row += 2;//4
+                             //4 строка
+                    sheet.Cells[row, 1, row, 4].Merge = true;
+                    sheet.Cells[row, 1].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                    sheet.Cells[row, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    sheet.Cells[row, 1, row, 4].Value = "Наименование товара";
+                    sheet.Cells[row, 5].Value = "Артикул";
+                    sheet.Cells[row, 6].Value = "Кол-во";
+                    sheet.Cells[row, 7].Value = "Цена";
+                    sheet.Cells[row, 8].Value = "Сумма";
+                    sheet.Cells[row, 1, row, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    sheet.Cells[row, 1, row, 8].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    sheet.Cells[row, 1, row, 8].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    //Цикл с 5 строки
+                    row++;//5
+                    int rowStart = row; //Хранение строки, с которой началось заполнение списка продукции
+                    if (receipt.productsInTransaction != null)
                     {
-                        sheet.Cells[row, 1, row, 4].Merge = true;
-                        sheet.Cells[row, 1, row, 4].Value = product.Name;
-                        sheet.Cells[row, 5].Value = product.Id;
-                        sheet.Cells[row, 6].Value = product.Quality;
-                        sheet.Cells[row, 7].Value = product.Cost;
-                        sheet.Cells[row, 8].Value = product.Cost * product.Quality;
-                        row++;
+                        foreach (var product in receipt.productsInTransaction)
+                        {
+                            sheet.Cells[row, 1, row, 4].Merge = true;
+                            sheet.Cells[row, 1, row, 4].Value = product.Name;
+                            sheet.Cells[row, 5].Value = product.Id;
+                            sheet.Cells[row, 6].Value = product.Quality;
+                            sheet.Cells[row, 7].Value = product.Cost;
+                            sheet.Cells[row, 8].Value = product.Cost * product.Quality;
+                            row++;
+                        }
+                        sheet.Cells[rowStart, 1, row - 1, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                        sheet.Cells[rowStart, 1, row - 1, 8].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                        sheet.Cells[rowStart, 1, row - 1, 8].Style.Border.Right.Style = ExcelBorderStyle.Thin;
                     }
-                    sheet.Cells[rowStart, 1, row - 1, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                    sheet.Cells[rowStart, 1, row - 1, 8].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                    sheet.Cells[rowStart, 1, row - 1, 8].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    //Конец цикла вывода продукции
+                    //Заключительная строка
+                    sheet.Cells[row, 1].Value = "Итого:";
+                    sheet.Cells[row, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    sheet.Cells[row, 2].Value = $"{receipt.transaction.Sum} руб.";
+                    sheet.Cells[row, 2].AutoFitColumns();
+                    sheet.Cells[row, 1, row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                    sheet.Cells[row, 1, row, 2].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    sheet.Cells[row, 1, row, 2].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+
+                    sheet.Cells[row, 4].Value = "Подпись:";
+                    sheet.Cells[row, 5, row, 8].Merge = true;
+                    sheet.Cells[row, 5, row, 8].Value = "____________________________________";
+
+                    //Отступ для нового чека
+                    row += 2;
                 }
-                //Конец цикла вывода продукции
-                //Заключительная строка
-                sheet.Cells[row, 1].Value = "Итого:";
-                sheet.Cells[row, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                sheet.Cells[row, 2].Value = $"{receipt.transaction.Sum} руб.";
-                sheet.Cells[row, 2].AutoFitColumns();
-                sheet.Cells[row, 1, row, 2].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                sheet.Cells[row, 1, row, 2].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                sheet.Cells[row, 1, row, 2].Style.Border.Right.Style = ExcelBorderStyle.Thin;
-
-                sheet.Cells[row, 4].Value = "Подпись:";
-                sheet.Cells[row, 5, row, 8].Merge = true;
-                sheet.Cells[row, 5, row, 8].Value = "____________________________________";
-
-                //Отступ для нового чека
-                row++;
-            }
+            }          
             return sheet;
         }
 

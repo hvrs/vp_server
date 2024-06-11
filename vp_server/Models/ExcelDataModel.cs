@@ -8,6 +8,7 @@
         public IEnumerable<restProduct>? restProducts { get; set; }//Список оставшейся продукции
         public int? productReceipt { get; set; }//Поступившая за выбранный период продукция
         public IEnumerable<receiptProduct> receiptProducts { get; set; }//список поступившей продукции 
+        public List<ReceiptDataModel>? receiptsTransaction { get; set; }//Чеки за период
     }
     public class restProduct
     {
