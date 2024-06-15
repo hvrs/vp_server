@@ -219,7 +219,7 @@ namespace vp_server.Controllers
             {
                 Product? product = db.Products.Where(p => p.Id == id).FirstOrDefault();
                 if (product != null)
-                {
+                { 
                     db.Products.Remove(product);
                     db.SaveChanges();
                 }

@@ -124,17 +124,20 @@ namespace vp_server.Utils
                     //Цикл с 5 строки
                     row++;//5
                     int rowStart = row; //Хранение строки, с которой началось заполнение списка продукции
-                    if (receipt.productsInTransaction != null)
+                    if (receipt.productsInTransaction != null && receipt.productsInTransaction.Any())
                     {
                         foreach (var product in receipt.productsInTransaction)
                         {
-                            sheet.Cells[row, 1, row, 4].Merge = true;
-                            sheet.Cells[row, 1, row, 4].Value = product.Name;
-                            sheet.Cells[row, 5].Value = product.Id;
-                            sheet.Cells[row, 6].Value = product.Quality;
-                            sheet.Cells[row, 7].Value = product.Cost;
-                            sheet.Cells[row, 8].Value = product.Cost * product.Quality;
-                            row++;
+                            if (product != null)
+                            {
+                                sheet.Cells[row, 1, row, 4].Merge = true;
+                                sheet.Cells[row, 1, row, 4].Value = product.Name;
+                                sheet.Cells[row, 5].Value = product.Id;
+                                sheet.Cells[row, 6].Value = product.Quality;
+                                sheet.Cells[row, 7].Value = product.Cost;
+                                sheet.Cells[row, 8].Value = product.Cost * product.Quality;
+                                row++;
+                            }
                         }
                         sheet.Cells[rowStart, 1, row - 1, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                         sheet.Cells[rowStart, 1, row - 1, 8].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
@@ -196,7 +199,7 @@ namespace vp_server.Utils
             //Некоторый цикл
             int row = 5; //Строка
             int col = 1; //Столбек
-            if (DataModel.productsInTransaction != null)
+            if (DataModel.productsInTransaction != null && DataModel.productsInTransaction.Any())
             {
                 foreach (var item in DataModel.productsInTransaction)
                 {
@@ -211,6 +214,12 @@ namespace vp_server.Utils
                 sheet.Cells[5, 1, row-1, 8].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                 sheet.Cells[5, 1, row-1, 8].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                 sheet.Cells[5, 1, row-1, 8].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            }
+            else
+            {
+                sheet.Cells[row, col, row, 4].Merge = true;
+                sheet.Cells[row, col, row, 4].Value = "Используемый в транзакции продукт удален";
+                row++;
             }
             //Конец некоторого цикла           
 
