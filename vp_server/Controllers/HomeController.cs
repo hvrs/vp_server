@@ -11,6 +11,10 @@ namespace vp_server.Controllers
     public class HomeController : Controller
     {
         Recorder recorder = new Recorder();
+        public IActionResult StartPage()
+        {
+            return View();
+        }
         public IActionResult Index(string? name, int? category, int? manufacturer)
         {                  
             using (VapeshopContext db = new VapeshopContext())
