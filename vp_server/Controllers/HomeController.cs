@@ -21,42 +21,110 @@ namespace vp_server.Controllers
             {             
                IQueryable<Product> products = db.Products.Include(p=>p.Manufacturer).Include(p=>p.Category).Include(p=>p.NicotineType).Include(p=>p.Strength);
                List<Product> productList = new List<Product>();
-                if (category != null)
+                if (category == 1)
                 {
-                    var ctg = db.Categories.Where(c => c.ParentCategoryId == category).ToList();
+                    bool isProdCategory = db.Categories.FirstOrDefault(c => c.Id == category).isProduct;
                     if (name != null)
+                    {
+                        if (manufacturer !=0 && manufacturer != null)
+                        {
+                            productList = products.Where(p => (p.Category.isProduct == isProdCategory) && (p.Title.Contains(name) && (p.ManufacturerId == manufacturer))).ToList();
+                        }
+                        else
+                        {
+                            productList = products.Where(p => (p.Category.isProduct == isProdCategory) && (p.Title.Contains(name))).ToList();
+                        }
+                    }
+                    else
                     {
                         if (manufacturer != 0 && manufacturer != null)
                         {
-                            productList = products.Where(p => (p.CategoryId == category) && (p.Title.Contains(name) && (p.ManufacturerId == manufacturer))).ToList();
-                            if (ctg.Count != 0 && ctg != null)
+                            productList = products.Where(p => (p.Category.isProduct == isProdCategory) && (p.ManufacturerId == manufacturer)).ToList();
+                        }
+                        else
+                        {
+                            productList = products.Where(p=>p.Category.isProduct == isProdCategory).ToList();
+                        }
+                    }
+                }
+                else
+                {
+                    if (category != null)
+                    {
+                        var ctg = db.Categories.Where(c => c.ParentCategoryId == category).ToList();
+                        if (name != null)
+                        {
+                            if (manufacturer != 0 && manufacturer != null)
                             {
-                                foreach (var ct in ctg)
+                                productList = products.Where(p => (p.CategoryId == category) && (p.Title.Contains(name) && (p.ManufacturerId == manufacturer))).ToList();
+                                if (ctg.Count != 0 && ctg != null)
                                 {
-                                    var tempProduct = products.Where(p => (p.CategoryId == ct.Id) && (p.Title.Contains(name) && (p.ManufacturerId == manufacturer)));
-                                    if (tempProduct != null)
+                                    foreach (var ct in ctg)
                                     {
-                                        foreach (var item in tempProduct)
+                                        var tempProduct = products.Where(p => (p.CategoryId == ct.Id) && (p.Title.Contains(name) && (p.ManufacturerId == manufacturer)));
+                                        if (tempProduct != null)
                                         {
-                                            productList.Add(item);
+                                            foreach (var item in tempProduct)
+                                            {
+                                                productList.Add(item);
+                                            }
                                         }
                                     }
                                 }
-                            }                            
-                        }
-                        else//name и ctg есть, но нет manufacturer
-                        {
-                            productList = products.Where(p => (p.CategoryId == category) && (p.Title.Contains(name))).ToList();
-                            if (ctg.Count !=0 && ctg !=null)
+                            }
+                            else//name и ctg есть, но нет manufacturer
                             {
-                                foreach (var ct in ctg)
+                                productList = products.Where(p => (p.CategoryId == category) && (p.Title.Contains(name))).ToList();
+                                if (ctg.Count != 0 && ctg != null)
                                 {
-                                    var tempProduct = products.Where(p => (p.CategoryId == ct.Id) && (p.Title.Contains(name)));
-                                    if (tempProduct != null)
+                                    foreach (var ct in ctg)
                                     {
-                                        foreach (var item in tempProduct)
+                                        var tempProduct = products.Where(p => (p.CategoryId == ct.Id) && (p.Title.Contains(name)));
+                                        if (tempProduct != null)
                                         {
-                                            productList.Add(item);
+                                            foreach (var item in tempProduct)
+                                            {
+                                                productList.Add(item);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (manufacturer != 0 && manufacturer != null)
+                            {
+                                productList = products.Where(p => (p.CategoryId == category) && (p.ManufacturerId == manufacturer)).ToList();
+                                if (ctg.Count != 0 && ctg != null)
+                                {
+                                    foreach (var ct in ctg)
+                                    {
+                                        var tempProduct = products.Where(p => (p.CategoryId == ct.Id) && (p.ManufacturerId == manufacturer));
+                                        if (tempProduct != null)
+                                        {
+                                            foreach (var item in tempProduct)
+                                            {
+                                                productList.Add(item);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else//manufacturer = 0 и name null, только категория
+                            {
+                                productList = products.Where(p => p.CategoryId == category).ToList();
+                                if (ctg.Count != 0 && ctg != null)
+                                {
+                                    foreach (var ct in ctg)
+                                    {
+                                        var tempProduct = products.Where(p => p.CategoryId == ct.Id);
+                                        if (tempProduct != null)
+                                        {
+                                            foreach (var item in tempProduct)
+                                            {
+                                                productList.Add(item);
+                                            }
                                         }
                                     }
                                 }
@@ -65,69 +133,30 @@ namespace vp_server.Controllers
                     }
                     else
                     {
-                        if (manufacturer != 0 && manufacturer != null)
+                        if (name != null)
                         {
-                            productList = products.Where(p => (p.CategoryId == category) && (p.ManufacturerId == manufacturer)).ToList();
-                            if (ctg.Count != 0 && ctg !=null)
+                            if (manufacturer != 0 && manufacturer != null)
                             {
-                                foreach (var ct in ctg)
-                                {
-                                    var tempProduct = products.Where(p => (p.CategoryId == ct.Id) && (p.ManufacturerId == manufacturer));
-                                    if (tempProduct !=null)
-                                    {
-                                        foreach (var item in tempProduct)
-                                        {
-                                            productList.Add(item);
-                                        }
-                                    }
-                                }
+                                productList = products.Where(p => (p.ManufacturerId == manufacturer) && (p.Title.Contains(name))).ToList();
+                            }
+                            else
+                            {
+                                productList = products.Where(p => p.Title.Contains(name)).ToList();
                             }
                         }
-                        else//manufacturer = 0 и name null, только категория
+                        else//имя null
                         {
-                            productList = products.Where(p => p.CategoryId == category).ToList();
-                            if (ctg.Count != 0 && ctg != null)
+                            if (manufacturer != 0 && manufacturer != null)
                             {
-                                foreach (var ct in ctg)
-                                {
-                                    var tempProduct = products.Where(p => p.CategoryId == ct.Id);
-                                    if (tempProduct != null)
-                                    {
-                                        foreach (var item in tempProduct)
-                                        {
-                                            productList.Add(item);
-                                        }
-                                    }
-                                }
+                                productList = products.Where(p => p.ManufacturerId == manufacturer).ToList();
+                            }
+                            else//категория 0 имя null производитель null
+                            {
+                                productList = products.ToList();
                             }
                         }
                     }
-                }
-                else
-                {
-                    if (name != null)
-                    {
-                        if (manufacturer != 0 && manufacturer != null)
-                        {
-                            productList = products.Where(p => (p.ManufacturerId == manufacturer) && (p.Title.Contains(name))).ToList();
-                        }
-                        else
-                        {
-                            productList = products.Where(p => p.Title.Contains(name)).ToList();
-                        }
-                    }
-                    else//имя null
-                    {
-                        if (manufacturer != 0 && manufacturer !=null)
-                        {
-                            productList = products.Where(p => p.ManufacturerId == manufacturer).ToList();
-                        }
-                        else//категория 0 имя null производитель null
-                        {
-                            productList = products.ToList();
-                        }
-                    }
-                }              
+                }                            
                 List<Manufacturer> manufacturers = db.Manufacturers.ToList();
                 manufacturers.Insert(0, new Manufacturer { Title = "Все", Id = 0 });
                 ProductsAttributesCategories PAC = new ProductsAttributesCategories

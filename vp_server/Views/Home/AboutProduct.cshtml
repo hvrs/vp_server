@@ -149,6 +149,18 @@
                 document.getElementById("uploadPreview").src = oFREvent.target.result;
             };
         };
+
+        document.getElementById("uploadImage").addEventListener('change', function () {
+            var fileExtension = ['jpg', 'jpeg', 'png'];
+            if (this.value) {
+                if ($.inArray($(this).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+                    alert("Загружаемый файл имеет формат, отличный от поддерживаемых: .jpg; .jpeg; .png")
+                    $('#btn_submit').prop('disabled', true);
+                } else {
+                    $('#btn_submit').prop('disabled', false);
+                }
+            }
+        });
      
     </script>
 </body>
